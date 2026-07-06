@@ -7,7 +7,7 @@ services:
     name: speedy-dispatch-bot
     runtime: node
     rootDir: apps/dispatch-bot
-    buildCommand: corepack enable && pnpm install --frozen-lockfile
+    buildCommand: corepack enable && pnpm install
     startCommand: pnpm start
     healthCheckPath: /health
     envVars:

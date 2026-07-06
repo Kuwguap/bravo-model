@@ -5,7 +5,7 @@ services:
     name: speedy-central-bot
     runtime: node
     rootDir: apps/central-bot
-    buildCommand: corepack enable && pnpm install --frozen-lockfile
+    buildCommand: corepack enable && pnpm install
     startCommand: pnpm start
     healthCheckPath: /health
     envVars:
@@ -38,5 +38,5 @@ services:
 #     runtime: node
 #     rootDir: apps/central-bot
 #     schedule: "0 14 * * *"   # daily 14:00 UTC
-#     buildCommand: corepack enable && pnpm install --frozen-lockfile
+#     buildCommand: corepack enable && pnpm install
 #     startCommand: pnpm renewals
