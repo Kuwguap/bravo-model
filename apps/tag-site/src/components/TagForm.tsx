@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SUPPORTED_STATES } from "../lib/states";
 import {
   createCheckoutSession,
+  decodeVin,
   simulateSandbox,
   type PublicConfig,
   type SandboxResult,
@@ -40,9 +41,40 @@ export default function TagForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SandboxResult | null>(null);
+  const [vinStatus, setVinStatus] = useState<"idle" | "decoding" | "done" | "fail">("idle");
+  const decodedVin = useRef<string>("");
 
   const set = (k: keyof TagFormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setF((prev) => ({ ...prev, [k]: e.target.value }));
+
+  // Auto-decode the VIN once it's 17 chars: fill year/make/model/body.
+  useEffect(() => {
+    const vin = (f.vin || "").trim().toUpperCase();
+    if (vin.length !== 17 || vin === decodedVin.current) return;
+    decodedVin.current = vin;
+    let cancelled = false;
+    setVinStatus("decoding");
+    decodeVin(vin)
+      .then((d) => {
+        if (cancelled) return;
+        if (!d.year && !d.make && !d.model) {
+          setVinStatus("fail");
+          return;
+        }
+        setF((p) => ({
+          ...p,
+          year: d.year || p.year,
+          make: d.make || p.make,
+          model: d.model || p.model,
+          body: d.body || p.body,
+        }));
+        setVinStatus("done");
+      })
+      .catch(() => !cancelled && setVinStatus("fail"));
+    return () => {
+      cancelled = true;
+    };
+  }, [f.vin]);
 
   const total = useMemo(() => {
     if (!config) return null;
@@ -138,8 +170,19 @@ export default function TagForm({
 
         <Section title="Vehicle">
           <div>
-            <label className="label">VIN</label>
-            <input className="field font-plate uppercase" maxLength={17} value={f.vin} onChange={set("vin")} />
+            <div className="flex items-center justify-between">
+              <label className="label">VIN</label>
+              {vinStatus === "decoding" && <span className="text-xs text-slate-light">Decoding VIN…</span>}
+              {vinStatus === "done" && <span className="text-xs text-reg">✓ Year, make &amp; model filled</span>}
+              {vinStatus === "fail" && <span className="text-xs text-issued-deep">Couldn't decode — enter manually</span>}
+            </div>
+            <input
+              className="field font-plate uppercase"
+              maxLength={17}
+              value={f.vin}
+              onChange={set("vin")}
+              placeholder="17-character VIN"
+            />
           </div>
           <div className="grid gap-4 sm:grid-cols-4">
             <div>

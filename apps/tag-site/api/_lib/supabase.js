@@ -11,7 +11,18 @@ let _service = null;
 function required(name) {
   const v = process.env[name];
   if (!v) throw new Error(`[supabase] missing env ${name}`);
-  return v;
+  return cleanEnv(v);
+}
+
+/**
+ * Strip a stray UTF-8 BOM (U+FEFF) and surrounding whitespace so the value is
+ * safe to use in an HTTP header — a leading BOM throws "Cannot convert argument
+ * to a ByteString". Defensive, even though env is set clean.
+ */
+export function cleanEnv(v) {
+  let s = String(v == null ? "" : v);
+  if (s.charCodeAt(0) === 0xfeff) s = s.slice(1);
+  return s.trim();
 }
 
 export function getServiceClient() {

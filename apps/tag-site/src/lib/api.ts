@@ -63,6 +63,17 @@ export function verifySession(sessionId: string) {
   return req<VerifyResult>(`/api/checkout/verify?session_id=${encodeURIComponent(sessionId)}`);
 }
 
+export interface VinDecode {
+  year?: string;
+  make?: string;
+  model?: string;
+  body?: string;
+}
+
+export function decodeVin(vin: string) {
+  return req<VinDecode>(`/api/vin/decode?vin=${encodeURIComponent(vin)}`);
+}
+
 export interface SandboxResult {
   ok: boolean;
   orderId: string;

@@ -5,9 +5,9 @@
  */
 
 import Stripe from "stripe";
-import { getServiceClient } from "./supabase.js";
+import { getServiceClient, cleanEnv } from "./supabase.js";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+export const stripe = new Stripe(cleanEnv(process.env.STRIPE_SECRET_KEY), {
   apiVersion: "2024-12-18.acacia",
 });
 
