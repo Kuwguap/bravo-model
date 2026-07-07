@@ -1,0 +1,86 @@
+# Render Blueprint for the two bots (repo root — Render reads render.yaml here).
+#
+# Deploy: Render Dashboard → New → Blueprint → connect the GitHub repo
+# (Kuwguap/bravo-model). Render creates both services below. You'll be prompted
+# for the `sync: false` secrets during apply; the rest are pre-filled.
+#
+# The websites (tag-site, insurance-site) live on Vercel and are NOT in this
+# blueprint. Both bots resolve the @speedy/shared workspace package because
+# `pnpm install` from a workspace member installs the whole monorepo.
+#
+# Free instances spin down when idle, which drops Telegram webhook delivery —
+# use `starter` (or higher) for always-on bots.
+
+services:
+  # ── Dispatch bot ─────────────────────────────────────────────────────────
+  - type: web
+    name: nj-dispatch-bot
+    runtime: node
+    plan: starter
+    rootDir: apps/dispatch-bot
+    buildCommand: corepack enable && pnpm install
+    startCommand: pnpm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # Secrets — you enter these when applying the blueprint:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: DISPATCH_SHARED_SECRET # must match the tag-site Vercel project
+        sync: false
+      # Pre-filled:
+      - key: SENDGRID_FROM
+        value: no-reply@njtemporarytag.com
+      - key: APP_NAME
+        value: NJ Temporary Tag
+      - key: APP_URL
+        value: https://njtemporarytag.com
+      - key: FALLBACK_CLAIM_TIMEOUT_MS
+        value: "300000"
+      # DISPATCH_PUBLIC_URL is auto-derived from Render's RENDER_EXTERNAL_URL,
+      # so the bot self-registers its Telegram webhook. Override only if needed.
+
+  # ── Central bot + dashboard ──────────────────────────────────────────────
+  - type: web
+    name: nj-central-bot
+    runtime: node
+    plan: starter
+    rootDir: apps/central-bot
+    buildCommand: corepack enable && pnpm install
+    startCommand: pnpm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: ADMIN_PASSWORD # dashboard login
+        sync: false
+      - key: TELEGRAM_CENTRAL_BOT_TOKEN
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true # Render generates a random value
+      - key: SENDGRID_FROM
+        value: no-reply@njtemporarytag.com
+      - key: APP_URL
+        value: https://njtemporarytag.com
+      - key: RENEWAL_PERIOD_DAYS
+        value: "28"
+      - key: RENEWAL_SWEEP_MINUTES
+        value: "360"
+      # CENTRAL_PUBLIC_URL is auto-derived from RENDER_EXTERNAL_URL.

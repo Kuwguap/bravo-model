@@ -81,17 +81,18 @@ no workspace deps, so it installs cleanly. Fill its env from
 Stripe webhook `https://<insurance-domain>/api/stripe/webhook`. Attach a domain of
 your choice (you own `instantaiinsurance.com` / `tristatecoverage.com`).
 
-## 9) Deploy the two bots → Render
-For each: **New → Web Service → connect `bravo-model`**, set **Root Directory** and
-use the `render.yaml` in that folder (Build `corepack enable && pnpm install`,
-Start `pnpm start`, Health `/health`).
+## 9) Deploy the two bots → Render (Blueprint)
+The repo root has a **`render.yaml` blueprint** defining both bots. In Render:
+**New → Blueprint → connect `bravo-model`**. Render creates `nj-dispatch-bot`
+and `nj-central-bot`, prompts for the `sync: false` secrets, and pre-fills the
+rest. Both bots self-register their Telegram webhooks from Render's
+`RENDER_EXTERNAL_URL`, so no manual public-URL step is needed.
 
-- **dispatch-bot** — Root `apps/dispatch-bot`. After first deploy, set
-  `DISPATCH_PUBLIC_URL` to the Render URL and redeploy (it registers its Telegram
-  webhook on boot; or run `pnpm --filter @speedy/dispatch-bot set-webhook`).
-- **central-bot** — Root `apps/central-bot`. Set `CENTRAL_PUBLIC_URL` to its Render
-  URL. The dashboard is at that URL (`/login`, password = `ADMIN_PASSWORD`).
-  Optionally add a Render **Cron Job** hitting `POST /cron/renewals` daily.
+- **dispatch-bot** — needs `TELEGRAM_BOT_TOKEN`, `DISPATCH_SHARED_SECRET`
+  (must match the tag-site), Supabase, OpenAI, SendGrid.
+- **central-bot** — dashboard at its Render URL (`/login`, password =
+  `ADMIN_PASSWORD`). Optionally add a Render **Cron Job** hitting
+  `POST /cron/renewals` daily.
 
 Point the tag site at the dispatch bot: set `DISPATCH_BOT_URL` = dispatch-bot Render
 URL on the **tag-site** project, and use the **same** `DISPATCH_SHARED_SECRET` on both.

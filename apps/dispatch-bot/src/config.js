@@ -2,7 +2,9 @@ import "dotenv/config";
 
 export const config = {
   botToken: process.env.TELEGRAM_BOT_TOKEN || "",
-  publicUrl: (process.env.DISPATCH_PUBLIC_URL || "").replace(/\/$/, ""),
+  // On Render, RENDER_EXTERNAL_URL is injected automatically, so the bot
+  // self-registers its Telegram webhook without a manual DISPATCH_PUBLIC_URL.
+  publicUrl: (process.env.DISPATCH_PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || "").replace(/\/$/, ""),
   sharedSecret: process.env.DISPATCH_SHARED_SECRET || "",
   port: Number(process.env.PORT || 8080),
   fallbackTimeoutMs: Number(process.env.FALLBACK_CLAIM_TIMEOUT_MS || 300000),

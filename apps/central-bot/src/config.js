@@ -8,7 +8,9 @@ export const config = {
   renewalPeriodDays: Number(process.env.RENEWAL_PERIOD_DAYS || 28),
   // Central Telegram control bot (optional)
   botToken: process.env.TELEGRAM_CENTRAL_BOT_TOKEN || "",
-  publicUrl: (process.env.CENTRAL_PUBLIC_URL || "").replace(/\/$/, ""),
+  // On Render, RENDER_EXTERNAL_URL is injected automatically (used for the
+  // central control bot's Telegram webhook).
+  publicUrl: (process.env.CENTRAL_PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || "").replace(/\/$/, ""),
   // How often the in-process renewal sweep runs (minutes)
   renewalSweepMinutes: Number(process.env.RENEWAL_SWEEP_MINUTES || 360),
 };

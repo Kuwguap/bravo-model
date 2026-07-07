@@ -75,10 +75,9 @@ cd apps/tag-site && vercel dev
 - **Vercel** (tag-site): New Project → Root Directory `apps/tag-site`. Vercel
   detects pnpm + the workspace. Add all env vars. Set the Stripe webhook to
   `https://<domain>/api/stripe/webhook`.
-- **Render** (dispatch-bot): New Web Service → Root Directory `apps/dispatch-bot`
-  (see `render.yaml`). Build `corepack enable && pnpm install`, start `pnpm start`.
-  Set `DISPATCH_PUBLIC_URL` to the Render URL; the bot registers its Telegram
-  webhook on boot (or run `pnpm --filter @speedy/dispatch-bot set-webhook`).
+- **Render** (both bots): New → **Blueprint** → connect the repo. The root
+  `render.yaml` creates `nj-dispatch-bot` + `nj-central-bot`. They self-register
+  their Telegram webhooks from `RENDER_EXTERNAL_URL`. See `DEPLOY.md`.
 
 ## Verification checklist (Phase 1)
 
@@ -131,7 +130,7 @@ Render Cron Job. Needs migration `0002_renewals_central.sql`.
 Optional **Telegram control bot** (`TELEGRAM_CENTRAL_BOT_TOKEN`): `/stats` for a
 live snapshot, `/renewals` to trigger the sweep.
 
-Deploy on Render with Root Directory `apps/central-bot` (see its `render.yaml`).
+Deploy on Render via the root `render.yaml` Blueprint (creates `nj-central-bot`).
 
 ## Notes / open items
 

@@ -6,227 +6,175 @@ import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
 import BrandMark from '@/components/BrandMark'
 
+const display = { fontFamily: 'var(--font-oswald), system-ui, sans-serif' }
+const mono = { fontFamily: 'ui-monospace, "Space Mono", monospace' }
+
+/** Signature element: a New Jersey insurance ID card that mirrors the issued PDF. */
+function InsuranceCard() {
+  return (
+    <div className="relative w-full max-w-md">
+      <div
+        className="relative overflow-hidden rounded-2xl border border-white/60 px-7 pb-6 pt-5 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.5)]"
+        style={{ background: 'linear-gradient(155deg,#FBFAF4 0%,#EFECE1 55%,#F7F5EE 100%)' }}
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#1F5E3A]" style={display}>
+            New Jersey
+          </span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#5A6472]" style={display}>
+            Auto ID Card
+          </span>
+        </div>
+        <h3 className="mt-2 text-lg font-bold uppercase leading-tight text-[#12161C]" style={display}>
+          Insurance Identification Card
+        </h3>
+
+        <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-[#12161C]/10 pt-4 text-[13px]">
+          {[
+            ['Policy no.', 'NJ-2035252790'],
+            ['Insured', 'Your name here'],
+            ['Vehicle', '2021 Honda Accord'],
+            ['Effective', 'JUL 07 2026'],
+            ['Expires', 'AUG 06 2026'],
+            ['Carrier', 'NJ Coverage'],
+          ].map(([k, v]) => (
+            <div key={k}>
+              <dt className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8A94A3]" style={display}>
+                {k}
+              </dt>
+              <dd className="truncate text-[#12161C]" style={k === 'Policy no.' ? mono : undefined}>
+                {v}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="pointer-events-none absolute -right-3 top-8 -rotate-[10deg]">
+          <span className="inline-block rounded-md border-[3px] border-[#1F5E3A] px-3 py-1 text-lg font-bold uppercase tracking-[0.15em] text-[#1F5E3A]/90" style={display}>
+            Active
+          </span>
+        </div>
+      </div>
+      <div className="absolute -bottom-2 left-4 right-4 h-6 rounded-b-2xl bg-black/20 blur-xl" />
+    </div>
+  )
+}
+
 export default function Home() {
   const { user } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (user) {
-      router.push('/dashboard')
-    }
+    if (user) router.push('/dashboard')
   }, [user, router])
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+    <div className="min-h-screen bg-[#F5F3EC] text-[#12161C]">
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 border-b border-[#12161C]/10 bg-[#F5F3EC]/85 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <BrandMark href="/" />
-          <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="btn-primary-brand px-6 py-2.5 text-sm"
-            >
-              Sign In
+          <div className="flex items-center gap-2">
+            <Link href="/login" className="rounded-full px-5 py-2.5 text-sm font-semibold text-[#12161C] hover:bg-[#12161C]/5" style={display}>
+              Sign in
+            </Link>
+            <Link href="/purchase" className="rounded-full bg-[#1F5E3A] px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-[#F5F3EC] transition hover:bg-[#2E7D4F]" style={display}>
+              Get covered
             </Link>
           </div>
         </div>
       </nav>
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-teal-900 text-white">
+      {/* Hero — the ID card is the thesis */}
+      <section className="relative overflow-hidden">
         <div
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            backgroundImage: `radial-gradient(at 20% 30%, rgba(45, 212, 191, 0.25) 0px, transparent 50%),
-              radial-gradient(at 80% 20%, rgba(59, 130, 246, 0.2) 0px, transparent 45%),
-              radial-gradient(at 50% 80%, rgba(16, 185, 129, 0.15) 0px, transparent 50%)`,
-          }}
+          className="pointer-events-none absolute inset-0"
+          style={{ backgroundImage: 'radial-gradient(circle at 14% 0%,rgba(31,94,58,0.08),transparent 42%),radial-gradient(circle at 88% 8%,rgba(232,163,61,0.05),transparent 44%)' }}
         />
-        <div className="relative mx-auto max-w-7xl px-4 py-24 md:py-32">
-          <div className="max-w-2xl">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-teal-300/90">
-              NJ Coverage
-            </p>
-            <h1 className="text-balance text-4xl font-bold leading-tight tracking-tight md:text-6xl">
-              Your insurance, organized in one place
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 md:grid-cols-2 md:py-24">
+          <div>
+            <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5A6472]" style={display}>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#1F5E3A]" /> New Jersey · Auto coverage
+            </span>
+            <h1 className="mt-5 text-5xl font-bold uppercase leading-[0.98] tracking-tight text-[#12161C] sm:text-6xl" style={display}>
+              Covered before
+              <br />
+              you pull off.
             </h1>
-            <p className="mt-6 text-lg leading-relaxed text-slate-300 md:text-xl">
-              View policies, coverage, and vehicle details in a clear, secure dashboard—built
-              for policy holders across the tri-state region. <strong className="text-white">You can also purchase
-              auto insurance online</strong> and receive your proof-of-insurance PDF by email.
+            <p className="mt-5 max-w-md text-lg leading-relaxed text-[#3A352C]">
+              Buy auto coverage online and get your New Jersey insurance ID card by
+              email in minutes. Then manage every policy, vehicle, and payment in one
+              clear dashboard.
             </p>
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-              <Link
-                href="/purchase"
-                className="inline-flex items-center justify-center rounded-xl bg-teal-400 px-8 py-4 text-center text-sm font-bold uppercase tracking-wide text-slate-950 shadow-lg shadow-teal-950/30 transition hover:bg-teal-300"
-              >
-                Purchase auto insurance
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link href="/purchase" className="rounded-full bg-[#12161C] px-7 py-3.5 text-sm font-semibold uppercase tracking-wide text-[#F5F3EC] transition hover:-translate-y-0.5 hover:shadow-lg" style={display}>
+                Get covered →
               </Link>
-              <Link
-                href="/login"
-                className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-center text-sm font-semibold text-slate-900 shadow-lg shadow-slate-900/20 transition hover:bg-teal-50"
-              >
-                Sign in to your account
-              </Link>
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-8 py-4 text-center text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
-              >
-                Create an account
+              <Link href="/login" className="rounded-full border border-[#12161C]/15 px-6 py-3.5 text-sm font-semibold text-[#12161C] transition hover:border-[#12161C]/40" style={display}>
+                Sign in
               </Link>
             </div>
-            <p className="mt-6 max-w-xl text-sm text-slate-400">
-              Plans: <span className="text-slate-200">1 mo $100</span> ·{' '}
-              <span className="text-slate-200">6 mo $500</span> ·{' '}
-              <span className="text-slate-200">12 mo $900</span> ·{' '}
-              <span className="text-slate-200">$100/mo recurring</span>
+            <p className="mt-6 text-sm text-[#5A6472]">
+              <span className="text-[#12161C]">1 mo $100</span> · <span className="text-[#12161C]">6 mo $500</span> ·{' '}
+              <span className="text-[#12161C]">12 mo $900</span> · <span className="text-[#12161C]">$100/mo recurring</span>
             </p>
+          </div>
+          <div className="flex justify-center md:justify-end">
+            <InsuranceCard />
           </div>
         </div>
       </section>
 
-      <section className="border-b border-slate-200/80 bg-white py-16">
-        <div className="mx-auto max-w-4xl px-4 text-center">
-          <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">
-            Buy auto insurance online
+      {/* How it works */}
+      <section className="mx-auto max-w-6xl px-5 py-16">
+        <div className="mb-10 max-w-lg">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5A6472]" style={display}>The process</span>
+          <h2 className="mt-3 text-3xl font-bold uppercase tracking-tight text-[#12161C]" style={display}>
+            Coverage in three steps.
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-slate-600">
-            Pay by card, add your driver and vehicle details, and get your insurance ID card PDF
-            emailed instantly — same layout as a New York insurance identification card.
-          </p>
-          <Link
-            href="/purchase"
-            className="mt-8 inline-flex rounded-xl bg-teal-700 px-10 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-md hover:bg-teal-600"
-          >
-            Purchase auto insurance
-          </Link>
         </div>
+        <ol className="grid gap-5 sm:grid-cols-3">
+          {[
+            ['Add your details', 'Driver and vehicle info — VIN, make, model. A couple of minutes.'],
+            ['Pick a term & pay', '1, 6, or 12 months, or $100/mo. Secure card payment.'],
+            ['Get your ID card', 'Your New Jersey insurance ID card PDF is emailed instantly.'],
+          ].map(([t, d], i) => (
+            <li key={t} className="rounded-2xl border border-[#12161C]/8 bg-white p-6 shadow-[0_12px_32px_-12px_rgba(18,22,28,0.25)]">
+              <span className="text-2xl font-bold text-[#1F5E3A]" style={mono}>{String(i + 1).padStart(2, '0')}</span>
+              <h3 className="mt-3 text-lg font-semibold text-[#12161C]" style={display}>{t}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#5A6472]">{d}</p>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section className="border-b border-slate-200/80 py-20">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-              Everything in one dashboard
+      {/* Coverage options */}
+      <section className="border-y border-[#12161C]/8 bg-white/60 py-16">
+        <div className="mx-auto max-w-6xl px-5">
+          <div className="mb-10 max-w-lg">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5A6472]" style={display}>What's included</span>
+            <h2 className="mt-3 text-3xl font-bold uppercase tracking-tight text-[#12161C]" style={display}>
+              Coverage we support.
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-lg text-slate-600">
-              Less paperwork, more clarity—see what matters at a glance.
-            </p>
           </div>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              {
-                title: 'Personal profile',
-                desc: 'Your contact details, member status, and account information in one place.',
-                icon: (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                ),
-              },
-              {
-                title: 'Vehicle & policy',
-                desc: 'VIN, policy number, and premium details—always up to date.',
-                icon: (
-                  <>
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-                    />
-                  </>
-                ),
-              },
-              {
-                title: 'Coverage clarity',
-                desc: 'Understand liability, collision, comprehensive, and add-ons without the jargon.',
-                icon: (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                  />
-                ),
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="surface-card group p-8 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-slate-900/10"
-              >
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500/15 to-emerald-600/10 ring-1 ring-teal-600/10">
-                  <svg
-                    className="h-7 w-7 text-teal-700"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    {item.icon}
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-slate-900">{item.title}</h3>
-                <p className="mt-3 leading-relaxed text-slate-600">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-              Coverage options we support
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-lg text-slate-600">
-              From liability to roadside assistance—track what&apos;s included on your policy.
-            </p>
-          </div>
-
           <div className="grid gap-4 md:grid-cols-2">
             {[
-              {
-                title: 'Liability coverage',
-                desc: 'Damages you cause to others’ vehicles and property.',
-              },
-              {
-                title: 'Collision coverage',
-                desc: 'Damage to your vehicle from collisions.',
-              },
-              {
-                title: 'Comprehensive coverage',
-                desc: 'Theft, weather, vandalism, and non-collision losses.',
-              },
-              {
-                title: 'Uninsured motorist',
-                desc: 'Protection when the other driver has little or no insurance.',
-              },
-              {
-                title: 'Medical payments',
-                desc: 'Medical expenses for you and your passengers.',
-              },
-              {
-                title: 'Roadside assistance',
-                desc: 'Help when you’re stranded—towing, lockouts, jumps, and more.',
-              },
-            ].map((item, idx) => (
-              <div key={idx} className="surface-card flex gap-4 p-6 transition hover:bg-slate-50/80">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100">
-                  <svg className="h-5 w-5 text-emerald-700" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
+              ['Liability', 'Damage you cause to others’ vehicles and property.'],
+              ['Collision', 'Damage to your vehicle from collisions.'],
+              ['Comprehensive', 'Theft, weather, vandalism, and non-collision losses.'],
+              ['Uninsured motorist', 'Protection when the other driver has little or no insurance.'],
+              ['Medical payments', 'Medical expenses for you and your passengers.'],
+              ['Roadside assistance', 'Towing, lockouts, jumps — help when you’re stranded.'],
+            ].map(([t, d]) => (
+              <div key={t} className="flex gap-4 rounded-xl border border-[#12161C]/8 bg-white p-5">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1F5E3A]/12">
+                  <svg className="h-5 w-5 text-[#1F5E3A]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">{item.title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-600">{item.desc}</p>
+                  <h3 className="font-semibold text-[#12161C]" style={display}>{t}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-[#5A6472]">{d}</p>
                 </div>
               </div>
             ))}
@@ -234,42 +182,30 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-t border-teal-800/50 bg-gradient-to-br from-teal-700 via-teal-800 to-slate-900 py-20">
-        <div className="mx-auto max-w-3xl px-4 text-center">
-          <h2 className="text-3xl font-bold text-white md:text-4xl">Ready when you are</h2>
-          <p className="mt-4 text-lg text-teal-100">
-            Sign in to open your NJ Coverage dashboard, create a new account in minutes, or buy a policy now.
-          </p>
-          <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-            <Link
-              href="/login"
-              className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-sm font-semibold text-teal-900 shadow-lg transition hover:bg-teal-50"
-            >
-              Sign in
+      {/* CTA band */}
+      <section className="bg-[#12161C]">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-5 py-14 sm:flex-row sm:items-center">
+          <div>
+            <h2 className="text-2xl font-bold uppercase text-[#F5F3EC]" style={display}>Ready when you are.</h2>
+            <p className="mt-2 max-w-md text-sm text-[#F5F3EC]/70">
+              Buy a policy now, or sign in to open your NJ Coverage dashboard.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/purchase" className="rounded-full bg-[#1F5E3A] px-7 py-3.5 text-sm font-semibold uppercase tracking-wide text-[#F5F3EC] transition hover:bg-[#2E7D4F]" style={display}>
+              Get covered →
             </Link>
-            <Link
-              href="/signup"
-              className="inline-flex items-center justify-center rounded-xl border border-white/25 bg-white/10 px-8 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
-            >
+            <Link href="/signup" className="rounded-full border border-white/25 px-6 py-3.5 text-sm font-semibold text-[#F5F3EC] transition hover:bg-white/10" style={display}>
               Create account
-            </Link>
-            <Link
-              href="/purchase"
-              className="inline-flex items-center justify-center rounded-xl bg-teal-400 px-8 py-4 text-sm font-bold uppercase tracking-wide text-slate-950 shadow-lg shadow-teal-950/30 transition hover:bg-teal-300"
-            >
-              Buy auto insurance
             </Link>
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-slate-800 bg-slate-950 py-12 text-slate-400">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 md:flex-row">
-          <BrandMark href="/" size="sm" invert />
-          <p className="max-w-md text-center text-sm leading-relaxed md:text-right">
-            NJ Coverage — clear coverage for the tri-state region. Auto insurance made
-            easier to understand.
-          </p>
+      <footer className="mx-auto max-w-6xl px-5 py-10">
+        <div className="flex flex-col items-start justify-between gap-3 border-t border-[#12161C]/10 pt-6 text-sm text-[#5A6472] sm:flex-row sm:items-center">
+          <BrandMark href="/" size="sm" />
+          <p className="text-[#8A94A3]">NJ Coverage — auto insurance, issued and managed online.</p>
         </div>
       </footer>
     </div>
