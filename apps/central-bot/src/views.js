@@ -94,7 +94,8 @@ export function overviewPage(o) {
     ${stat("Total revenue", money(o.revenueCents), `${o.txnCount} paid transactions`)}
     ${stat("Tags", money(o.tagRevenueCents), `${o.tagCount} orders`)}
     ${stat("Insurance", money(o.insRevenueCents), `${o.insCount} payments`)}
-    ${stat("Users", o.userCount, "registered")}
+    ${stat("Tag customers", o.userCount, "temp-tag buyers")}
+    ${stat("Insurance customers", o.insCustomers, `${o.activePolicies} active policies`)}
     ${stat("Deliveries", `${o.deliveriesOpen}`, `open · ${o.deliveriesDone} delivered`)}
     ${stat("Renewals due", o.renewalsDue, "awaiting reminder")}
   </div>

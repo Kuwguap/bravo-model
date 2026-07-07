@@ -52,7 +52,7 @@ export async function handleUpdate(update) {
         `Revenue: <b>${money(o.revenueCents)}</b> (${o.txnCount} paid)`,
         `• Tags: ${money(o.tagRevenueCents)} (${o.tagCount})`,
         `• Insurance: ${money(o.insRevenueCents)} (${o.insCount})`,
-        `Users: <b>${o.userCount}</b>`,
+        `Tag customers: <b>${o.userCount}</b> · Insurance: <b>${o.insCustomers}</b> (${o.activePolicies} active)`,
         `Deliveries: ${o.deliveriesOpen} open · ${o.deliveriesDone} done`,
         `Renewals due: <b>${o.renewalsDue}</b>`,
       ].join("\n"),

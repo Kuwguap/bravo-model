@@ -7,7 +7,7 @@ export const supa = () => getServiceClient();
 // ─── Overview metrics ────────────────────────────────────────────────────────
 export async function overview() {
   const client = supa();
-  const [txns, users, deliveries, dueRenewals] = await Promise.all([
+  const [txns, users, deliveries, dueRenewals, insCustomers, activePolicies] = await Promise.all([
     client.from("transactions").select("source, amount_cents, status"),
     client.from("users").select("id", { count: "exact", head: true }),
     client.from("deliveries").select("status"),
@@ -17,6 +17,9 @@ export async function overview() {
       .eq("status", "paid")
       .lte("renewal_due_at", new Date().toISOString())
       .is("renewal_reminded_at", null),
+    // Insurance side of the shared DB — surfaced so the dashboard is unified.
+    client.from("profiles").select("id", { count: "exact", head: true }),
+    client.from("policies").select("id", { count: "exact", head: true }).eq("status", "active"),
   ]);
 
   const rows = txns.data || [];
@@ -33,6 +36,8 @@ export async function overview() {
     insRevenueCents: sum(bySource("insurance")),
     insCount: bySource("insurance").length,
     userCount: users.count || 0,
+    insCustomers: insCustomers.count || 0,
+    activePolicies: activePolicies.count || 0,
     deliveriesOpen: dels.filter((d) => d.status === "accepted").length,
     deliveriesDone: dels.filter((d) => d.status === "delivered").length,
     renewalsDue: dueRenewals.count || 0,
