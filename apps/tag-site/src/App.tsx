@@ -2,6 +2,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
+import Qwertyuiop from "./pages/Qwertyuiop";
 
 function Header() {
   return (
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/success" element={<Success />} />
+          <Route path="/qwertyuiop" element={<Qwertyuiop />} />
         </Routes>
       </main>
       <Footer />

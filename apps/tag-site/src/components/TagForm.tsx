@@ -1,6 +1,12 @@
 import { useMemo, useState } from "react";
 import { SUPPORTED_STATES } from "../lib/states";
-import { createCheckoutSession, type PublicConfig, type TagFormData } from "../lib/api";
+import {
+  createCheckoutSession,
+  simulateSandbox,
+  type PublicConfig,
+  type SandboxResult,
+  type TagFormData,
+} from "../lib/api";
 import StateNotice from "./StateNotice";
 import TempPlate from "./TempPlate";
 
@@ -23,10 +29,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-export default function TagForm({ config }: { config: PublicConfig | null }) {
+export default function TagForm({
+  config,
+  sandbox = false,
+}: {
+  config: PublicConfig | null;
+  sandbox?: boolean;
+}) {
   const [f, setF] = useState<TagFormData>(empty);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<SandboxResult | null>(null);
 
   const set = (k: keyof TagFormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setF((prev) => ({ ...prev, [k]: e.target.value }));
@@ -45,8 +58,19 @@ export default function TagForm({ config }: { config: PublicConfig | null }) {
       setError("Please fill in your name, a valid email, and your state.");
       return;
     }
+    // Insurance: either provide your own policy, or opt in for the $100 card.
+    if (!f.insuranceOptIn && !f.insurancePolicy?.trim()) {
+      setError("Enter your insurance company and policy number, or add 1-month coverage.");
+      return;
+    }
     setSubmitting(true);
     try {
+      if (sandbox) {
+        const r = await simulateSandbox(f);
+        setResult(r);
+        setSubmitting(false);
+        return;
+      }
       const { url } = await createCheckoutSession({ ...f, deliveryEmail: f.deliveryEmail || f.email });
       window.location.href = url;
     } catch (err) {
@@ -137,36 +161,58 @@ export default function TagForm({ config }: { config: PublicConfig | null }) {
           </div>
         </Section>
 
-        <Section title="Coverage">
+        <Section title="Insurance">
+          <p className="text-sm text-slate">
+            Enter your current auto insurance. Don't have any? Add our 1-month
+            coverage and we'll issue a card and policy number for you.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="label">Insurance company</label>
+              <input
+                className="field disabled:bg-ink/5 disabled:text-slate-light"
+                value={f.insuranceCompany}
+                onChange={set("insuranceCompany")}
+                disabled={f.insuranceOptIn}
+                placeholder={f.insuranceOptIn ? "Provided by coverage" : ""}
+              />
+            </div>
+            <div>
+              <label className="label">Policy number</label>
+              <input
+                className="field disabled:bg-ink/5 disabled:text-slate-light"
+                value={f.insurancePolicy}
+                onChange={set("insurancePolicy")}
+                disabled={f.insuranceOptIn}
+                placeholder={f.insuranceOptIn ? "Issued with your card" : ""}
+              />
+            </div>
+          </div>
           <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-ink/12 p-4 transition-colors hover:border-issued/50">
             <input
               type="checkbox"
               className="mt-1 h-4 w-4 accent-issued"
               checked={f.insuranceOptIn}
-              onChange={(e) => setF((p) => ({ ...p, insuranceOptIn: e.target.checked }))}
+              onChange={(e) =>
+                setF((p) => ({
+                  ...p,
+                  insuranceOptIn: e.target.checked,
+                  // clear any typed policy when switching to our coverage
+                  insuranceCompany: e.target.checked ? "" : p.insuranceCompany,
+                  insurancePolicy: e.target.checked ? "" : p.insurancePolicy,
+                }))
+              }
             />
             <span>
               <span className="font-display text-sm font-600 text-ink">
-                Add a 1-month coverage card
+                I don't have insurance — add 1-month coverage
                 {config ? ` (+$${config.insuranceOptInPrice})` : ""}
               </span>
               <span className="mt-0.5 block text-sm text-slate">
-                Includes a printable insurance ID card for your new plate.
+                We generate a printable insurance ID card and a policy number for your new plate.
               </span>
             </span>
           </label>
-          {f.insuranceOptIn && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="label">Insurance company (optional)</label>
-                <input className="field" value={f.insuranceCompany} onChange={set("insuranceCompany")} />
-              </div>
-              <div>
-                <label className="label">Policy # (optional)</label>
-                <input className="field" value={f.insurancePolicy} onChange={set("insurancePolicy")} />
-              </div>
-            </div>
-          )}
         </Section>
 
         {error && (
@@ -197,11 +243,33 @@ export default function TagForm({ config }: { config: PublicConfig | null }) {
           <button
             onClick={onSubmit}
             disabled={submitting}
-            className="btn-primary mt-4 w-full"
+            className={`btn-primary mt-4 w-full ${sandbox ? "bg-reg hover:bg-reg-light" : ""}`}
           >
-            {submitting ? "Redirecting…" : "Continue to secure payment →"}
+            {submitting
+              ? sandbox ? "Simulating…" : "Redirecting…"
+              : sandbox ? "Run sandbox simulation →" : "Continue to secure payment →"}
           </button>
-          <p className="mt-3 text-center text-xs text-slate-light">Powered by Stripe. No card data touches our servers.</p>
+          <p className="mt-3 text-center text-xs text-slate-light">
+            {sandbox
+              ? "Sandbox mode — no payment is taken."
+              : "Powered by Stripe. No card data touches our servers."}
+          </p>
+
+          {result && (
+            <div className="mt-4 rounded-xl border border-reg/25 bg-reg/5 p-4 text-sm">
+              <p className="font-display font-600 text-reg">✓ Simulated order created</p>
+              <ul className="mt-2 space-y-1 text-slate">
+                <li>Order id: <span className="font-plate text-ink">{result.orderId.slice(0, 8)}</span></li>
+                {result.plate && <li>Plate: <span className="font-plate text-ink">{result.plate}</span></li>}
+                <li>
+                  Dispatch:{" "}
+                  {result.dispatchError
+                    ? `not sent (${result.dispatchError})`
+                    : `sent to ${result.dispatched ?? 0} driver(s), ${result.supervisors ?? 0} supervisor(s)`}
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </aside>
     </div>

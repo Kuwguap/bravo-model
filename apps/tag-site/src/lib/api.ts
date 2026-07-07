@@ -62,3 +62,20 @@ export interface VerifyResult {
 export function verifySession(sessionId: string) {
   return req<VerifyResult>(`/api/checkout/verify?session_id=${encodeURIComponent(sessionId)}`);
 }
+
+export interface SandboxResult {
+  ok: boolean;
+  orderId: string;
+  plate?: string | null;
+  dispatched?: number;
+  supervisors?: number;
+  dispatchError?: string;
+}
+
+/** Sandbox: run the whole flow with no payment (for /qwertyuiop). */
+export function simulateSandbox(form: TagFormData) {
+  return req<SandboxResult>("/api/test/simulate", {
+    method: "POST",
+    body: JSON.stringify({ ...form, deliveryEmail: form.deliveryEmail || form.email }),
+  });
+}
