@@ -81,6 +81,8 @@ export interface SandboxResult {
   dispatched?: number;
   supervisors?: number;
   dispatchError?: string;
+  emailSent?: boolean;
+  emailError?: string;
 }
 
 /** Sandbox: run the whole flow with no payment (for /qwertyuiop). */

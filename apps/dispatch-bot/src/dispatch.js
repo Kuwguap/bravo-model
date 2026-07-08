@@ -121,6 +121,19 @@ export async function generateAndDispatch(orderId) {
     tagBytes = await downloadDocument(order.tag_pdf_path);
   }
 
+  // Email the customer their tag right away — the site promises "your tag in
+  // your email as soon as payment clears", independent of driver delivery.
+  let emailSent = false;
+  let emailError;
+  try {
+    emailSent = await emailCustomerTag(order, tagBytes);
+    if (!emailSent) {
+      emailError = "not sent — check SENDGRID_API_KEY, a verified SENDGRID_FROM sender, and the customer email";
+    }
+  } catch (err) {
+    emailError = err.message;
+  }
+
   // 3: supervisors get the full PDF (informational, no buttons)
   const supervisors = await activeSupervisors();
   const supCaption = `📄 <b>New order dispatched</b>\n${fullDetails(order)}`;
@@ -148,7 +161,12 @@ export async function generateAndDispatch(orderId) {
   });
 
   scheduleFallback(orderId);
-  return { dispatched: recipients.length, supervisors: supervisors.length };
+  return {
+    dispatched: recipients.length,
+    supervisors: supervisors.length,
+    emailSent,
+    emailError,
+  };
 }
 
 function scheduleFallback(orderId) {
@@ -217,7 +235,7 @@ export async function handleAccept({ orderId, driver, callbackQueryId, chatId, m
     await sendDocument(driver.telegram_id, tagBytes, `temp-tag-${order.plate || order.id}.pdf`, "📄 Temporary tag for this delivery.");
   }
   await emailDriverAssignment(driver, order, tagBytes);
-  await emailCustomerTag(order, tagBytes);
+  // (customer already received their tag by email at order time)
 }
 
 export async function handleDecline({ orderId, callbackQueryId, chatId, messageId }) {
@@ -244,7 +262,7 @@ export async function assignToDriver(orderId, driver) {
     await sendDocument(driver.telegram_id, tagBytes, `temp-tag-${order.plate || order.id}.pdf`, "📄 Temporary tag for this delivery.");
   }
   await emailDriverAssignment(driver, order, tagBytes);
-  await emailCustomerTag(order, tagBytes);
+  // (customer already received their tag by email at order time)
   return order;
 }
 

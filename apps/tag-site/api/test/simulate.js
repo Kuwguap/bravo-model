@@ -111,6 +111,8 @@ export default async function handler(req, res) {
       dispatched: dispatch.dispatched,
       supervisors: dispatch.supervisors,
       dispatchError: dispatch.ok ? undefined : dispatch.error,
+      emailSent: dispatch.emailSent,
+      emailError: dispatch.emailError,
     });
   } catch (err) {
     console.error("[simulate]", err);

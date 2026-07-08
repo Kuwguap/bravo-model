@@ -310,6 +310,10 @@ export default function TagForm({
                     ? `not sent (${result.dispatchError})`
                     : `sent to ${result.dispatched ?? 0} driver(s), ${result.supervisors ?? 0} supervisor(s)`}
                 </li>
+                <li>
+                  Customer email:{" "}
+                  {result.emailSent ? "sent ✓" : `not sent${result.emailError ? ` (${result.emailError})` : ""}`}
+                </li>
               </ul>
             </div>
           )}
