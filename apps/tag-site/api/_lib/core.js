@@ -65,6 +65,19 @@ export function totalFor(insuranceOptIn, method, option) {
   return pricing.tag + (insuranceOptIn ? pricing.insuranceOptIn : 0) + deliverySurcharge(method, option);
 }
 
+/**
+ * Insert an order row. If the delivery_* columns haven't been migrated yet
+ * (0005), transparently retry without them so checkout never breaks mid-rollout.
+ */
+export async function insertOrder(client, row) {
+  let res = await client.from("orders").insert(row).select("*").single();
+  if (res.error && /delivery_option|delivery_price/.test(res.error.message || "")) {
+    const { delivery_option, delivery_price, ...rest } = row;
+    res = await client.from("orders").insert(rest).select("*").single();
+  }
+  return res;
+}
+
 /** Read raw request body (needed for Stripe webhook signature). */
 export async function readRawBody(req) {
   if (req.body && Buffer.isBuffer(req.body)) return req.body;

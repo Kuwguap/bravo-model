@@ -5,7 +5,7 @@
  * without Stripe. Backs the /qwertyuiop page.
  */
 
-import { supa, totalFor, deliverySurcharge, json } from "../_lib/core.js";
+import { supa, totalFor, deliverySurcharge, insertOrder, json } from "../_lib/core.js";
 
 async function readJson(req) {
   if (req.body && typeof req.body === "object") return req.body;
@@ -57,9 +57,7 @@ export default async function handler(req, res) {
     const total = totalFor(insuranceOptIn, deliveryMethod, deliveryOption);
     const now = new Date().toISOString();
 
-    const { data: order, error } = await client
-      .from("orders")
-      .insert({
+    const { data: order, error } = await insertOrder(client, {
         reference: `test_${Date.now().toString(36)}`,
         user_id: user?.id || null,
         status: "paid",
@@ -89,9 +87,7 @@ export default async function handler(req, res) {
         delivery_email: b.deliveryEmail || email,
         delivery_address: b.deliveryAddress || null,
         price: total,
-      })
-      .select("*")
-      .single();
+      });
     if (error) return json(res, 500, { error: error.message });
 
     // Ledger entry, then run the real dispatch pipeline.
