@@ -45,6 +45,7 @@ app.get("/", requireAuth, async (_req, res) => html(res, views.overviewPage(awai
 app.get("/transactions", requireAuth, async (_req, res) => html(res, views.transactionsPage(await db.listTransactions())));
 app.get("/deliveries", requireAuth, async (_req, res) => html(res, views.deliveriesPage(await db.listDeliveries())));
 app.get("/renewals", requireAuth, async (_req, res) => html(res, views.renewalsPage(await db.upcomingRenewals())));
+app.get("/insurance", requireAuth, async (_req, res) => html(res, views.insurancePage(await db.listInsurance())));
 app.get("/numbers", requireAuth, async (_req, res) => html(res, views.numbersPage(await db.getSettings())));
 app.get("/drivers", requireAuth, async (_req, res) => html(res, views.driversPage(await db.listDrivers())));
 

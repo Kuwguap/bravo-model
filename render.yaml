@@ -39,6 +39,8 @@ services:
         sync: false
       - key: DISPATCH_SHARED_SECRET # must match the tag-site Vercel project
         sync: false
+      - key: INTEGRATIONS_API_KEY # must match the insurance-site Vercel project
+        sync: false
       # Pre-filled:
       - key: SENDGRID_FROM
         value: no-reply@njtemporarytag.com
@@ -46,6 +48,10 @@ services:
         value: NJ Temporary Tag
       - key: APP_URL
         value: https://njtemporarytag.com
+      - key: INSURANCE_SITE_URL
+        value: https://njportal.us
+      - key: INSURANCE_OPT_IN_PRICE
+        value: "100"
       - key: FALLBACK_CLAIM_TIMEOUT_MS
         value: "300000"
       # DISPATCH_PUBLIC_URL is auto-derived from Render's RENDER_EXTERNAL_URL,

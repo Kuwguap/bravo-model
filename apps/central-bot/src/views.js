@@ -68,7 +68,7 @@ function layout(active, title, body) {
 <header class="top"><div class="topbar"><span class="brand"><b>NJ</b> Control</span>
 <form class="inline" method="post" action="/logout"><button class="btn ghost mini" style="color:#cdd3db;border-color:#39424f">Sign out</button></form></div>
 <nav class="tabs"><div class="wrap" style="display:flex;gap:4px;flex-wrap:wrap;padding:0">
-${tab("/", "Overview")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/renewals", "Renewals")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
+${tab("/", "Overview")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/renewals", "Renewals")}${tab("/insurance", "Insurance")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
 </div></nav></header>
 <main class="wrap">${body}</main></body></html>`;
 }
@@ -137,6 +137,24 @@ export function renewalsPage(rows) {
     : `<div class="empty">No paid orders with a renewal date yet.</div>`;
   return layout("/renewals", "Renewals", `<h1 class="page">Renewals</h1>
   <div class="card"><form method="post" action="/renewals/run" style="display:flex;justify-content:space-between;align-items:center"><span class="muted">Manually email everyone whose renewal is due and unreminded.</span><button class="btn amber">Run sweep now</button></form></div>
+  <div class="card">${body}</div>`);
+}
+
+export function insurancePage(rows) {
+  const body = rows.length
+    ? `<table><thead><tr><th>Customer</th><th>Login email</th><th>Password</th><th>Policy #</th><th>Status</th></tr></thead><tbody>
+    ${rows.map((r) => {
+      const who = `${r.first_name || ""} ${r.last_name || ""}`.trim() || "—";
+      return `<tr><td>${esc(who)}${r.plate ? ` <span class="muted">${esc(r.plate)}</span>` : ""}</td>
+        <td class="muted">${esc(r.insurance_login_email || r.delivery_email || r.email || "—")}</td>
+        <td style="font-family:ui-monospace,monospace">${esc(r.insurance_login_password || "—")}</td>
+        <td class="muted">${esc(r.insurance_assigned_policy || "—")}</td>
+        <td>${r.insurance_provisioned ? `<span class="pill delivered">Active</span>` : `<span class="pill due">Pending</span>`}</td></tr>`;
+    }).join("")}
+    </tbody></table>`
+    : `<div class="empty">No insurance opt-ins yet.</div>`;
+  return layout("/insurance", "Insurance", `<h1 class="page">Insurance accounts</h1>
+  <div class="card"><p class="muted">Customers who added the 1-month coverage. Login details are auto-created on the insurance site and emailed to the customer. Passwords shown here are for support only.</p></div>
   <div class="card">${body}</div>`);
 }
 

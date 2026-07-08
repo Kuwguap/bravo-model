@@ -131,6 +131,19 @@ export async function randomizeStarts() {
   });
 }
 
+// ─── Insurance (auto-provisioned accounts) ───────────────────────────────────
+export async function listInsurance(limit = 100) {
+  const { data } = await supa()
+    .from("orders")
+    .select(
+      "id, first_name, last_name, email, delivery_email, plate, paid_at, insurance_opt_in, insurance_provisioned, insurance_login_email, insurance_login_password, insurance_assigned_policy",
+    )
+    .eq("insurance_opt_in", true)
+    .order("paid_at", { ascending: false })
+    .limit(limit);
+  return data || [];
+}
+
 // ─── Renewals ────────────────────────────────────────────────────────────────
 export async function upcomingRenewals(limit = 100) {
   const { data } = await supa()

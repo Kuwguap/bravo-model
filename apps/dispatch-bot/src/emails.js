@@ -70,6 +70,27 @@ export async function emailDriverAssignment(driver, order, tagBytes) {
   });
 }
 
+/** Email the customer their new NJ Coverage login + policy details. */
+export async function emailInsuranceLogin(order, prov, insuranceBytes) {
+  const to = prov.email;
+  if (!to) return false;
+  const body = `
+    <p style="color:#3a352c;font-size:15px;line-height:1.6">Your 1-month auto coverage is active and your insurance ID card is attached. Manage your policy and re-download your card anytime from your NJ Coverage dashboard.</p>
+    <p style="margin:18px 0"><a href="${esc(prov.loginUrl)}" style="display:inline-block;background:#1F5E3A;color:#fff;text-decoration:none;padding:12px 22px;border-radius:999px;font-weight:600">Open my insurance dashboard →</a></p>
+    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:10px;border:1px solid #ece5d8">
+      ${[["Login", to], ["Password", prov.password], ["Policy #", prov.policyNumber]]
+        .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#6b6257;font-weight:600;white-space:nowrap">${esc(k)}</td><td style="padding:6px 12px;color:#1a1a1a;font-family:ui-monospace,monospace">${esc(v)}</td></tr>`)
+        .join("")}
+    </table>
+    <p style="color:#6b6257;font-size:13px;margin-top:16px">For your security, change your password after your first sign-in.</p>`;
+  return sendEmail({
+    to,
+    subject: "Your NJ Coverage account — login & policy details",
+    html: shell("Your insurance account is ready", body),
+    attachments: insuranceBytes ? [{ filename: `insurance-card-${prov.policyNumber}.pdf`, content: insuranceBytes }] : [],
+  });
+}
+
 /** Email the customer their generated temp tag. */
 export async function emailCustomerTag(order, tagBytes) {
   const to = order.delivery_email || order.email;

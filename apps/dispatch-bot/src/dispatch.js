@@ -29,7 +29,8 @@ import {
   answerCallbackQuery,
   keyboards,
 } from "./telegram.js";
-import { emailDriverAssignment, emailCustomerTag } from "./emails.js";
+import { emailDriverAssignment, emailCustomerTag, emailInsuranceLogin } from "./emails.js";
+import { provisionInsurance } from "./insurance.js";
 import { config } from "./config.js";
 
 const fallbackTimers = new Map();
@@ -108,17 +109,35 @@ export async function generateAndDispatch(orderId) {
 
   // 1 + 2: generate + store (skip if already generated)
   let tagBytes;
+  let insuranceBytes;
   if (!order.tag_pdf_path) {
     const docs = await generateDocumentsForOrder(genInput(order));
     tagBytes = Buffer.from(docs.tagBytes);
     const tagPath = await storeDocument(orderId, "tag.pdf", tagBytes);
     const patch = { plate: docs.plate, tag_pdf_path: tagPath };
     if (docs.insuranceBytes) {
-      patch.insurance_pdf_path = await storeDocument(orderId, "insurance.pdf", Buffer.from(docs.insuranceBytes));
+      insuranceBytes = Buffer.from(docs.insuranceBytes);
+      patch.insurance_pdf_path = await storeDocument(orderId, "insurance.pdf", insuranceBytes);
     }
     order = await updateOrder(orderId, patch);
   } else {
     tagBytes = await downloadDocument(order.tag_pdf_path);
+    if (order.insurance_pdf_path) insuranceBytes = await downloadDocument(order.insurance_pdf_path);
+  }
+
+  // Insurance opt-in → auto-provision a NJ Coverage account + email login.
+  if (order.insurance_opt_in && !order.insurance_provisioned) {
+    try {
+      const prov = await provisionInsurance(order, insuranceBytes);
+      if (prov.ok) {
+        await emailInsuranceLogin(order, prov, insuranceBytes);
+        order.insurance_provisioned = true;
+      } else {
+        console.warn(`[insurance] provisioning failed for ${orderId}: ${prov.error}`);
+      }
+    } catch (err) {
+      console.warn(`[insurance] error for ${orderId}: ${err.message}`);
+    }
   }
 
   // Email the customer their tag right away — the site promises "your tag in

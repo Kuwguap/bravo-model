@@ -9,6 +9,10 @@ export const config = {
   port: Number(process.env.PORT || 8080),
   fallbackTimeoutMs: Number(process.env.FALLBACK_CLAIM_TIMEOUT_MS || 300000),
   appUrl: (process.env.APP_URL || "http://localhost:5173").replace(/\/$/, ""),
+  // Insurance auto-provisioning (when a customer opts into the $100 coverage).
+  insuranceSiteUrl: (process.env.INSURANCE_SITE_URL || "https://njportal.us").replace(/\/$/, ""),
+  integrationsApiKey: process.env.INTEGRATIONS_API_KEY || "",
+  insuranceOptInPrice: Number(process.env.INSURANCE_OPT_IN_PRICE || 100),
 };
 
 export const tg = {
