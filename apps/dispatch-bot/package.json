@@ -11,7 +11,7 @@
     "set-webhook": "node scripts/set-webhook.js"
   },
   "dependencies": {
-    "@speedy/shared": "workspace:*",
+    "@speedy/shared": "file:../../packages/shared",
     "dotenv": "^16.4.7",
     "express": "^4.21.2"
   }

@@ -5,8 +5,9 @@
 # for the `sync: false` secrets during apply; the rest are pre-filled.
 #
 # The websites (tag-site, insurance-site) live on Vercel and are NOT in this
-# blueprint. Both bots resolve the @speedy/shared workspace package because
-# `pnpm install` from a workspace member installs the whole monorepo.
+# blueprint. The bots depend on @speedy/shared via a file: path, so plain npm
+# works (no pnpm/corepack): the build installs the shared package's own deps
+# (`--prefix ../../packages/shared`) then the bot's, and starts with node.
 #
 # Free instances spin down when idle, which drops Telegram webhook delivery —
 # use `starter` (or higher) for always-on bots.
@@ -18,8 +19,8 @@ services:
     runtime: node
     plan: starter
     rootDir: apps/dispatch-bot
-    buildCommand: corepack enable && pnpm install
-    startCommand: pnpm start
+    buildCommand: npm install --prefix ../../packages/shared && npm install
+    startCommand: node src/index.js
     healthCheckPath: /health
     autoDeploy: true
     envVars:
@@ -56,8 +57,8 @@ services:
     runtime: node
     plan: starter
     rootDir: apps/central-bot
-    buildCommand: corepack enable && pnpm install
-    startCommand: pnpm start
+    buildCommand: npm install --prefix ../../packages/shared && npm install
+    startCommand: node src/index.js
     healthCheckPath: /health
     autoDeploy: true
     envVars:
