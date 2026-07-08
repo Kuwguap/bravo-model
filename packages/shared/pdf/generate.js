@@ -81,9 +81,11 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
   const templatePath = state === "NJ" ? NJ_TEMPLATE_PATH : NON_NJ_TEMPLATE_PATH;
 
   let plate;
+  let carNumber;
   if (typeof allocatePlate === "function") {
     const allocated = await allocatePlate(state);
     plate = allocated.plate;
+    carNumber = allocated.carNumber; // 10-digit doc number from its own counter
   } else {
     plate = generatePlateNumber(order.reference || order.id);
   }
@@ -95,6 +97,7 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
     reference: order.reference,
     orderId: order.id,
     plate,
+    carNumber,
     vin: order.vin,
     year: normalized.year || order.year,
     make: normalized.make || order.make,

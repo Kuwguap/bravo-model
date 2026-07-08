@@ -36,7 +36,8 @@ export async function allocateNextPlate(client, state) {
   const isNj = String(state || "").toUpperCase() === "NJ";
   const { data, error } = await client.rpc("allocate_plate", { p_is_nj: isNj });
   if (error) throw new Error(`[plates] allocate_plate failed: ${error.message}`);
-  return { plate: data };
+  // allocate_plate now returns { plate, car }.
+  return { plate: data?.plate ?? data, carNumber: data?.car };
 }
 
 /** Convenience: returns an allocator bound to a client for a single call. */

@@ -45,7 +45,28 @@ app.get("/", requireAuth, async (_req, res) => html(res, views.overviewPage(awai
 app.get("/transactions", requireAuth, async (_req, res) => html(res, views.transactionsPage(await db.listTransactions())));
 app.get("/deliveries", requireAuth, async (_req, res) => html(res, views.deliveriesPage(await db.listDeliveries())));
 app.get("/renewals", requireAuth, async (_req, res) => html(res, views.renewalsPage(await db.upcomingRenewals())));
+app.get("/numbers", requireAuth, async (_req, res) => html(res, views.numbersPage(await db.getSettings())));
 app.get("/drivers", requireAuth, async (_req, res) => html(res, views.driversPage(await db.listDrivers())));
+
+// ─── Plate / doc numbers ─────────────────────────────────────────────────────
+app.post("/numbers", requireAuth, async (req, res) => {
+  const numFields = [
+    "nj_plate_digits", "nj_plate_next_number", "nj_car_next_number",
+    "non_nj_plate_digits", "non_nj_plate_next_number", "non_nj_car_next_number",
+  ];
+  const patch = { nj_plate_prefix: req.body.nj_plate_prefix, non_nj_plate_suffix: req.body.non_nj_plate_suffix };
+  for (const f of numFields) if (req.body[f] !== "") patch[f] = Number(req.body[f]);
+  try {
+    await db.updateSettings(patch);
+    res.redirect("/numbers");
+  } catch (err) {
+    html(res, views.numbersPage(await db.getSettings(), `Save failed: ${err.message}`));
+  }
+});
+app.post("/numbers/randomize", requireAuth, async (_req, res) => {
+  await db.randomizeStarts().catch((e) => console.error("[numbers]", e.message));
+  res.redirect("/numbers");
+});
 app.get("/supervisors", requireAuth, async (_req, res) => html(res, views.supervisorsPage(await db.listSupervisors())));
 
 // ─── Drivers CRUD ────────────────────────────────────────────────────────────

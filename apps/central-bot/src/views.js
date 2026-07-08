@@ -68,7 +68,7 @@ function layout(active, title, body) {
 <header class="top"><div class="topbar"><span class="brand"><b>NJ</b> Control</span>
 <form class="inline" method="post" action="/logout"><button class="btn ghost mini" style="color:#cdd3db;border-color:#39424f">Sign out</button></form></div>
 <nav class="tabs"><div class="wrap" style="display:flex;gap:4px;flex-wrap:wrap;padding:0">
-${tab("/", "Overview")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/renewals", "Renewals")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
+${tab("/", "Overview")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/renewals", "Renewals")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
 </div></nav></header>
 <main class="wrap">${body}</main></body></html>`;
 }
@@ -138,6 +138,45 @@ export function renewalsPage(rows) {
   return layout("/renewals", "Renewals", `<h1 class="page">Renewals</h1>
   <div class="card"><form method="post" action="/renewals/run" style="display:flex;justify-content:space-between;align-items:center"><span class="muted">Manually email everyone whose renewal is due and unreminded.</span><button class="btn amber">Run sweep now</button></form></div>
   <div class="card">${body}</div>`);
+}
+
+export function numbersPage(s, flash) {
+  const njPlate = `${s.nj_plate_prefix || "H"}${String(s.nj_plate_next_number ?? 150706).padStart(s.nj_plate_digits || 6, "0")}`;
+  const nonPlate = `${String(s.non_nj_plate_next_number ?? 150706).padStart(s.non_nj_plate_digits || 6, "0")}${s.non_nj_plate_suffix || "V"}`;
+  const njCar = String(s.nj_car_next_number ?? 6000000000).padStart(10, "0");
+  const nonCar = String(s.non_nj_car_next_number ?? 6000000000).padStart(10, "0");
+  const num = (name, val) =>
+    `<div class="fld"><label>${name}</label><input name="${name}" type="number" value="${esc(val ?? "")}"></div>`;
+  return layout("/numbers", "Numbers", `<h1 class="page">Plate &amp; document numbers</h1>
+  ${flash ? `<div class="flash">${esc(flash)}</div>` : ""}
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+    <div class="stat"><div class="k">Next NJ plate</div><div class="v" style="font-size:24px">${esc(njPlate)}</div><div class="sub">resident · H prefix</div></div>
+    <div class="stat"><div class="k">Next non-NJ plate</div><div class="v" style="font-size:24px">${esc(nonPlate)}</div><div class="sub">non-resident · V suffix</div></div>
+    <div class="stat"><div class="k">Next NJ doc #</div><div class="v" style="font-size:22px">${esc(njCar)}</div></div>
+    <div class="stat"><div class="k">Next non-NJ doc #</div><div class="v" style="font-size:22px">${esc(nonCar)}</div></div>
+  </div>
+  <div class="card">
+    <p class="muted">Every issued plate/doc number jumps by a random 100–300 automatically. Set where the counters start below, or randomize all four at once.</p>
+    <form method="post" action="/numbers/randomize" style="margin-top:10px"><button class="btn amber">Randomize starts (+100–300 each)</button></form>
+  </div>
+  <div class="card"><form method="post" action="/numbers">
+    <b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">NJ (resident)</b>
+    <div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr auto;margin-top:8px">
+      <div class="fld"><label>nj_plate_prefix</label><input name="nj_plate_prefix" value="${esc(s.nj_plate_prefix || "H")}"></div>
+      ${num("nj_plate_digits", s.nj_plate_digits ?? 6)}
+      ${num("nj_plate_next_number", s.nj_plate_next_number ?? 150706)}
+      ${num("nj_car_next_number", s.nj_car_next_number ?? 6000000000)}
+      <div></div>
+    </div>
+    <b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px;display:block;margin-top:16px">Non-NJ (non-resident)</b>
+    <div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr auto;margin-top:8px">
+      <div class="fld"><label>non_nj_plate_suffix</label><input name="non_nj_plate_suffix" value="${esc(s.non_nj_plate_suffix || "V")}"></div>
+      ${num("non_nj_plate_digits", s.non_nj_plate_digits ?? 6)}
+      ${num("non_nj_plate_next_number", s.non_nj_plate_next_number ?? 150706)}
+      ${num("non_nj_car_next_number", s.non_nj_car_next_number ?? 6000000000)}
+      <button class="btn">Save</button>
+    </div>
+  </form></div>`);
 }
 
 export function driversPage(rows, flash) {

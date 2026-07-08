@@ -13,8 +13,9 @@ const COLOR_MAP = {
   black: "BLK",
   blk: "BLK",
   bk: "BLK",
-  white: "WHT",
-  wht: "WHT",
+  white: "WHI",
+  wht: "WHI",
+  whi: "WHI",
   red: "RED",
   blue: "BLU",
   blu: "BLU",
@@ -173,7 +174,7 @@ async function normalizeWithOpenAi(fields) {
   if (!key) return null;
 
   const prompt = `Normalize vehicle tag PDF fields. Output ONLY JSON with keys:
-color (exactly 3 uppercase letters, e.g. BLK RED BLU YLW WHT GRN SLV),
+color (exactly 3 uppercase letters, e.g. BLK RED BLU YLW WHI GRN SLV),
 body (format like "Sedan 4DR", "SUV 4DR", "Coupe 2DR", "Extended Cab 2DR", "Crew-Cab 2DR", "Regular Cab 2DR", "Cargo 3DR" — title case words, only the DR suffix in caps),
 make (title case brand, e.g. Toyota),
 model (title case, e.g. Camry),

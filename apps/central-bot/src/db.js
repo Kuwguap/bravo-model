@@ -105,6 +105,32 @@ export async function listDeliveries(limit = 100) {
   return rows;
 }
 
+// ─── Plate / doc-number settings ─────────────────────────────────────────────
+export async function getSettings() {
+  const { data } = await supa().from("settings").select("*").eq("id", 1).single();
+  return data || {};
+}
+export async function updateSettings(patch) {
+  const clean = {};
+  for (const [k, v] of Object.entries(patch)) {
+    if (v !== undefined && v !== null && v !== "") clean[k] = v;
+  }
+  clean.updated_at = new Date().toISOString();
+  const { error } = await supa().from("settings").update(clean).eq("id", 1);
+  if (error) throw new Error(error.message);
+}
+/** Bump every start counter by a random 100–300 (makes the next numbers jump). */
+export async function randomizeStarts() {
+  const s = await getSettings();
+  const bump = () => Math.floor(Math.random() * 201 + 100);
+  await updateSettings({
+    nj_plate_next_number: Number(s.nj_plate_next_number || 0) + bump(),
+    non_nj_plate_next_number: Number(s.non_nj_plate_next_number || 0) + bump(),
+    nj_car_next_number: Number(s.nj_car_next_number || 0) + bump(),
+    non_nj_car_next_number: Number(s.non_nj_car_next_number || 0) + bump(),
+  });
+}
+
 // ─── Renewals ────────────────────────────────────────────────────────────────
 export async function upcomingRenewals(limit = 100) {
   const { data } = await supa()
