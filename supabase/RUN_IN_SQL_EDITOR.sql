@@ -1,8 +1,9 @@
 -- ============================================================
--- NJ Temporary Tag — run this ONCE in the Supabase SQL editor
--- Project SQL Editor → New query → paste → Run. Idempotent.
--- Does NOT touch your insurance tables.
+-- NJ Temporary Tag — run this ONCE in the Supabase SQL editor.
+-- Idempotent. Does NOT touch your insurance tables.
 -- ============================================================
+
+-- ==== 0001_init_tags_dispatch ====
 
 -- ============================================================================
 -- Phase 1 schema: tag orders + Telegram dispatch (drivers/supervisors/deliveries)
@@ -203,7 +204,7 @@ insert into storage.buckets (id, name, public)
 values ('delivery-receipts', 'delivery-receipts', false)
 on conflict (id) do nothing;
 
--- ---- 0002: renewals + central ----
+-- ==== 0002_renewals_central ====
 
 -- Central dashboard / renewal support.
 -- Tracks when a 28-day renewal reminder was last sent for a tag order so the
@@ -217,7 +218,7 @@ create index if not exists orders_renewal_due_idx
   on public.orders (renewal_due_at)
   where status = 'paid';
 
--- ---- 0003: plate + doc-number counters (random 100-300 jumps) ----
+-- ==== 0003_plate_car_numbers ====
 
 -- ============================================================
 -- Plate + document-number allocation, matching the real dealer plates.
@@ -277,7 +278,7 @@ begin
 end;
 $$;
 
--- ---- 0004: insurance provisioning tracking ----
+-- ==== 0004_insurance_provisioning ====
 
 -- Track the insurance account auto-provisioned when a customer opts into the
 -- $100 coverage on the tag site. Login password is stored for the internal
@@ -289,7 +290,7 @@ alter table public.orders
   add column if not exists insurance_login_password  text,
   add column if not exists insurance_assigned_policy text;
 
--- ---- 0005: delivery options ----
+-- ==== 0005_delivery_options ====
 
 -- Delivery method sub-choice + fee for the aggregate checkout total.
 --   delivery_method: email | mail | pickup | robot | driver  (existing column)
@@ -299,3 +300,9 @@ alter table public.orders
 alter table public.orders
   add column if not exists delivery_option text,
   add column if not exists delivery_price  numeric not null default 0;
+
+-- Allow the five delivery methods (was email/driver/fedex only).
+alter table public.orders drop constraint if exists orders_delivery_method_check;
+alter table public.orders add constraint orders_delivery_method_check
+  check (delivery_method in ('email', 'mail', 'pickup', 'robot', 'driver'));
+

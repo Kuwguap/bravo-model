@@ -6,3 +6,8 @@
 alter table public.orders
   add column if not exists delivery_option text,
   add column if not exists delivery_price  numeric not null default 0;
+
+-- Allow the five delivery methods (was email/driver/fedex only).
+alter table public.orders drop constraint if exists orders_delivery_method_check;
+alter table public.orders add constraint orders_delivery_method_check
+  check (delivery_method in ('email', 'mail', 'pickup', 'robot', 'driver'));
