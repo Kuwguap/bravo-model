@@ -5,7 +5,7 @@
  * without Stripe. Backs the /qwertyuiop page.
  */
 
-import { supa, totalFor, json } from "../_lib/core.js";
+import { supa, totalFor, deliverySurcharge, json } from "../_lib/core.js";
 
 async function readJson(req) {
   if (req.body && typeof req.body === "object") return req.body;
@@ -52,6 +52,9 @@ export default async function handler(req, res) {
       .single();
 
     const insuranceOptIn = Boolean(b.insuranceOptIn);
+    const deliveryMethod = b.deliveryMethod || "email";
+    const deliveryOption = b.deliveryOption || null;
+    const total = totalFor(insuranceOptIn, deliveryMethod, deliveryOption);
     const now = new Date().toISOString();
 
     const { data: order, error } = await client
@@ -80,10 +83,12 @@ export default async function handler(req, res) {
         insurance_company: b.insuranceCompany || null,
         insurance_policy: b.insurancePolicy || null,
         notes: `[SANDBOX] ${b.notes || ""}`.trim(),
-        delivery_method: b.deliveryMethod || "email",
+        delivery_method: deliveryMethod,
+        delivery_option: deliveryOption,
+        delivery_price: deliverySurcharge(deliveryMethod, deliveryOption),
         delivery_email: b.deliveryEmail || email,
         delivery_address: b.deliveryAddress || null,
-        price: totalFor(insuranceOptIn),
+        price: total,
       })
       .select("*")
       .single();
@@ -93,7 +98,7 @@ export default async function handler(req, res) {
     await client.from("transactions").insert({
       source: "tag",
       stripe_id: `sandbox-${order.id}`,
-      amount_cents: Math.round(totalFor(insuranceOptIn) * 100),
+      amount_cents: Math.round(total * 100),
       status: "paid",
       user_id: user?.id || null,
       order_id: order.id,

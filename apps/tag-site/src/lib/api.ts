@@ -1,8 +1,21 @@
+export interface DeliveryTier {
+  label: string;
+  surcharge?: number;
+  fee?: number;
+}
+export interface DeliveryOption {
+  label: string;
+  surcharge: number;
+  eta: string;
+  tiers?: Record<string, DeliveryTier>;
+  uberZones?: Record<string, DeliveryTier>;
+}
 export interface PublicConfig {
   currencySymbol: string;
   tagPrice: number;
   insuranceOptInPrice: number;
   renewalPeriodDays: number;
+  delivery?: Record<string, DeliveryOption>;
 }
 
 export interface TagFormData {
@@ -25,7 +38,8 @@ export interface TagFormData {
   insuranceCompany?: string;
   insurancePolicy?: string;
   notes?: string;
-  deliveryMethod?: "email" | "driver" | "fedex";
+  deliveryMethod?: string;
+  deliveryOption?: string;
   deliveryEmail?: string;
   deliveryAddress?: string;
 }

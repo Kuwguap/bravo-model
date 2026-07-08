@@ -16,7 +16,7 @@ const empty: TagFormData = {
   address: "", address2: "", city: "", zip: "",
   vin: "", year: "", make: "", model: "", color: "", body: "",
   insuranceOptIn: false, insuranceCompany: "", insurancePolicy: "", notes: "",
-  deliveryMethod: "email", deliveryEmail: "",
+  deliveryMethod: "email", deliveryOption: "", deliveryEmail: "",
 };
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -76,10 +76,26 @@ export default function TagForm({
     };
   }, [f.vin]);
 
+  const deliveryFee = useMemo(() => {
+    const d = config?.delivery?.[f.deliveryMethod || "email"];
+    if (!d) return 0;
+    if (d.tiers) return d.tiers[f.deliveryOption || ""]?.surcharge ?? d.surcharge;
+    if (d.uberZones) return d.uberZones[f.deliveryOption || ""]?.fee ?? 0;
+    return d.surcharge || 0;
+  }, [config, f.deliveryMethod, f.deliveryOption]);
+
   const total = useMemo(() => {
     if (!config) return null;
-    return config.tagPrice + (f.insuranceOptIn ? config.insuranceOptInPrice : 0);
-  }, [config, f.insuranceOptIn]);
+    return config.tagPrice + (f.insuranceOptIn ? config.insuranceOptInPrice : 0) + deliveryFee;
+  }, [config, f.insuranceOptIn, deliveryFee]);
+
+  function selectDelivery(key: string) {
+    const opt = config?.delivery?.[key];
+    let deliveryOption = "";
+    if (opt?.tiers) deliveryOption = Object.keys(opt.tiers)[0];
+    else if (opt?.uberZones) deliveryOption = Object.keys(opt.uberZones)[0];
+    setF((p) => ({ ...p, deliveryMethod: key, deliveryOption }));
+  }
 
   const vehicleLabel = [f.year, f.make, f.model].filter(Boolean).join(" ");
 
@@ -204,6 +220,73 @@ export default function TagForm({
           </div>
         </Section>
 
+        {config?.delivery && (
+          <Section title="Delivery">
+            <p className="text-sm text-slate">Choose how you want your tag delivered. The price below is your total.</p>
+            <div className="grid gap-2.5">
+              {Object.entries(config.delivery).map(([key, opt]) => {
+                const active = (f.deliveryMethod || "email") === key;
+                const priceLabel = opt.tiers
+                  ? "options below"
+                  : opt.uberZones
+                    ? "+ Uber fee"
+                    : opt.surcharge
+                      ? `+$${opt.surcharge}`
+                      : "included";
+                return (
+                  <label
+                    key={key}
+                    className={`flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-colors ${
+                      active ? "border-issued bg-issued/5" : "border-ink/12 hover:border-issued/50"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="delivery"
+                      className="mt-1 h-4 w-4 accent-issued"
+                      checked={active}
+                      onChange={() => selectDelivery(key)}
+                    />
+                    <span className="flex-1">
+                      <span className="flex items-baseline justify-between">
+                        <span className="font-display text-sm font-600 text-ink">{opt.label}</span>
+                        <span className="font-display text-sm font-600 text-issued-deep">{priceLabel}</span>
+                      </span>
+                      <span className="mt-0.5 block text-sm text-slate">{opt.eta}</span>
+                      {active && opt.tiers && (
+                        <select
+                          className="field mt-2"
+                          value={f.deliveryOption}
+                          onChange={(e) => setF((p) => ({ ...p, deliveryOption: e.target.value }))}
+                        >
+                          {Object.entries(opt.tiers).map(([tk, tv]) => (
+                            <option key={tk} value={tk}>
+                              {tv.label} — +${tv.surcharge}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      {active && opt.uberZones && (
+                        <select
+                          className="field mt-2"
+                          value={f.deliveryOption}
+                          onChange={(e) => setF((p) => ({ ...p, deliveryOption: e.target.value }))}
+                        >
+                          {Object.entries(opt.uberZones).map(([zk, zv]) => (
+                            <option key={zk} value={zk}>
+                              {zv.label} — +${zv.fee}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </Section>
+        )}
+
         <Section title="Insurance">
           <p className="text-sm text-slate">
             Enter your current auto insurance. Don't have any? Add our 1-month
@@ -282,7 +365,11 @@ export default function TagForm({
               {total != null ? `$${total}` : "—"}
             </span>
           </div>
-          <p className="mt-1 text-sm text-slate">30-day temporary tag{f.insuranceOptIn ? " + coverage card" : ""}.</p>
+          <p className="mt-1 text-sm text-slate">
+            30-day tag · {config?.delivery?.[f.deliveryMethod || "email"]?.label || "Email"}
+            {deliveryFee ? ` (+$${deliveryFee})` : ""}
+            {f.insuranceOptIn ? " · coverage card" : ""}
+          </p>
           <button
             onClick={onSubmit}
             disabled={submitting}

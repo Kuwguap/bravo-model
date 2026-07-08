@@ -19,9 +19,50 @@ export const pricing = {
   currency: "usd",
 };
 
-/** Total in dollars for a given opt-in flag. */
-export function totalFor(insuranceOptIn) {
-  return pricing.tag + (insuranceOptIn ? pricing.insuranceOptIn : 0);
+/**
+ * Delivery methods. Every option includes the $150 tag; `surcharge` is the
+ * amount added on top. Some methods carry a sub-choice (`tiers` for Mail,
+ * `uberZones` for the Robot/Uber courier) that sets the surcharge.
+ */
+export const DELIVERY = {
+  email: { label: "Email", surcharge: 0, eta: "Instant — within 15 minutes" },
+  mail: {
+    label: "Mail",
+    surcharge: 12,
+    eta: "USPS, tracked",
+    tiers: {
+      priority: { label: "Priority (2–3 days)", surcharge: 12 },
+      overnight: { label: "Overnight (next day)", surcharge: 33 },
+    },
+  },
+  pickup: { label: "Pickup", surcharge: 0, eta: "247 Knox Ave, Cliffside Park, NJ 07010" },
+  robot: {
+    label: "Robot / Uber courier",
+    surcharge: 0,
+    eta: "Prepaid tags only — no cash to the courier",
+    uberZones: {
+      paterson: { label: "Paterson", fee: 27 },
+      bronx: { label: "Bronx", fee: 31 },
+      brooklyn: { label: "Brooklyn", fee: 50 },
+      gwb: { label: "North NJ / near GW Bridge", fee: 50 },
+      queens: { label: "Queens", fee: 50 },
+    },
+  },
+  driver: { label: "Human driver", surcharge: 0, eta: "Free delivery" },
+};
+
+/** Delivery surcharge in dollars for a method + optional sub-choice. */
+export function deliverySurcharge(method, option) {
+  const m = DELIVERY[method];
+  if (!m) return 0;
+  if (m.tiers) return m.tiers[option]?.surcharge ?? m.surcharge;
+  if (m.uberZones) return m.uberZones[option]?.fee ?? 0;
+  return m.surcharge || 0;
+}
+
+/** Aggregate total in dollars: tag + insurance opt-in + delivery. */
+export function totalFor(insuranceOptIn, method, option) {
+  return pricing.tag + (insuranceOptIn ? pricing.insuranceOptIn : 0) + deliverySurcharge(method, option);
 }
 
 /** Read raw request body (needed for Stripe webhook signature). */

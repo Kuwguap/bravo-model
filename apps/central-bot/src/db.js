@@ -131,6 +131,61 @@ export async function randomizeStarts() {
   });
 }
 
+// ─── Analytics ───────────────────────────────────────────────────────────────
+export async function analytics() {
+  const client = supa();
+  const [orders, users, profiles, policies] = await Promise.all([
+    client.from("orders").select("status, price, delivery_method, insurance_opt_in, insurance_provisioned, paid_at"),
+    client.from("users").select("id", { count: "exact", head: true }),
+    client.from("profiles").select("id", { count: "exact", head: true }),
+    client.from("policies").select("id", { count: "exact", head: true }).eq("status", "active"),
+  ]);
+  const all = orders.data || [];
+  const paid = all.filter((o) => o.status === "paid");
+  const now = Date.now();
+  const byMethod = {};
+  for (const o of paid) {
+    const k = o.delivery_method || "email";
+    byMethod[k] = (byMethod[k] || 0) + 1;
+  }
+  const rev = (arr) => arr.reduce((n, o) => n + Number(o.price || 0), 0);
+  const last7 = paid.filter((o) => o.paid_at && now - new Date(o.paid_at).getTime() < 7 * 86400000);
+  return {
+    liveClients: (users.count || 0) + (profiles.count || 0),
+    tagCustomers: users.count || 0,
+    insuranceCustomers: profiles.count || 0,
+    activePolicies: policies.count || 0,
+    ordersTotal: all.length,
+    ordersPaid: paid.length,
+    ordersPending: all.filter((o) => o.status === "pending").length,
+    revenue: rev(paid),
+    avgOrder: paid.length ? rev(paid) / paid.length : 0,
+    byMethod,
+    insuranceOptIns: paid.filter((o) => o.insurance_opt_in).length,
+    insuranceProvisioned: paid.filter((o) => o.insurance_provisioned).length,
+    last7Count: last7.length,
+    last7Revenue: rev(last7),
+  };
+}
+
+export async function listOrders(limit = 60) {
+  const { data } = await supa()
+    .from("orders")
+    .select("id, first_name, last_name, email, state, plate, status, price, delivery_method, insurance_opt_in, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  return data || [];
+}
+
+/** Delete an order and its dependent rows (deliveries have a restrict FK). */
+export async function deleteOrder(id) {
+  const c = supa();
+  await c.from("deliveries").delete().eq("order_id", id);
+  await c.from("transactions").delete().eq("order_id", id);
+  const { error } = await c.from("orders").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 // ─── Insurance (auto-provisioned accounts) ───────────────────────────────────
 export async function listInsurance(limit = 100) {
   const { data } = await supa()

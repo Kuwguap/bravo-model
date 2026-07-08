@@ -68,7 +68,7 @@ function layout(active, title, body) {
 <header class="top"><div class="topbar"><span class="brand"><b>NJ</b> Control</span>
 <form class="inline" method="post" action="/logout"><button class="btn ghost mini" style="color:#cdd3db;border-color:#39424f">Sign out</button></form></div>
 <nav class="tabs"><div class="wrap" style="display:flex;gap:4px;flex-wrap:wrap;padding:0">
-${tab("/", "Overview")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/renewals", "Renewals")}${tab("/insurance", "Insurance")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
+${tab("/", "Overview")}${tab("/analytics", "Analytics")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/renewals", "Renewals")}${tab("/insurance", "Insurance")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
 </div></nav></header>
 <main class="wrap">${body}</main></body></html>`;
 }
@@ -138,6 +138,44 @@ export function renewalsPage(rows) {
   return layout("/renewals", "Renewals", `<h1 class="page">Renewals</h1>
   <div class="card"><form method="post" action="/renewals/run" style="display:flex;justify-content:space-between;align-items:center"><span class="muted">Manually email everyone whose renewal is due and unreminded.</span><button class="btn amber">Run sweep now</button></form></div>
   <div class="card">${body}</div>`);
+}
+
+export function analyticsPage(a, orders, flash) {
+  const stat = (k, v, sub) => `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div>${sub ? `<div class="sub">${sub}</div>` : ""}</div>`;
+  const maxMethod = Math.max(1, ...Object.values(a.byMethod || {}));
+  const methodBars = Object.entries(a.byMethod || {})
+    .sort((x, y) => y[1] - x[1])
+    .map(([k, n]) => `<div style="margin:6px 0">
+      <div style="display:flex;justify-content:space-between;font-size:13px"><span>${esc(k)}</span><span class="muted">${n}</span></div>
+      <div style="height:8px;background:var(--line);border-radius:4px;overflow:hidden"><div style="height:100%;width:${Math.round((n / maxMethod) * 100)}%;background:var(--reg)"></div></div>
+    </div>`).join("") || `<div class="muted">No paid orders yet.</div>`;
+
+  const orderRows = (orders || []).length
+    ? `<table><thead><tr><th>When</th><th>Customer</th><th>Plate</th><th>Delivery</th><th>Status</th><th>Total</th><th></th></tr></thead><tbody>
+      ${orders.map((o) => `<tr>
+        <td>${dt(o.created_at)}</td>
+        <td>${esc(`${o.first_name || ""} ${o.last_name || ""}`.trim() || o.email || "—")}${o.insurance_opt_in ? ' <span class="pill insurance">+ins</span>' : ""}</td>
+        <td class="muted">${esc(o.plate || "—")}</td>
+        <td>${esc(o.delivery_method || "—")}</td>
+        <td><span class="pill ${o.status === "paid" ? "delivered" : "assigned"}">${esc(o.status)}</span></td>
+        <td>$${Number(o.price || 0).toFixed(2)}</td>
+        <td style="text-align:right"><form class="inline" method="post" action="/orders/${o.id}/delete" onsubmit="return confirm('Delete this order permanently?')"><button class="btn ghost mini">Delete</button></form></td>
+      </tr>`).join("")}
+      </tbody></table>`
+    : `<div class="empty">No orders yet.</div>`;
+
+  return layout("/analytics", "Analytics", `<h1 class="page">Analytics</h1>
+  ${flash ? `<div class="flash">${esc(flash)}</div>` : ""}
+  <div class="grid">
+    ${stat("Live clients", a.liveClients, `${a.tagCustomers} tag · ${a.insuranceCustomers} insurance`)}
+    ${stat("Paid orders", a.ordersPaid, `${a.ordersPending} pending`)}
+    ${stat("Revenue", money(Math.round(a.revenue * 100)), `avg ${money(Math.round(a.avgOrder * 100))}`)}
+    ${stat("Last 7 days", a.last7Count, `${money(Math.round(a.last7Revenue * 100))} revenue`)}
+    ${stat("Active policies", a.activePolicies, `${a.insuranceProvisioned}/${a.insuranceOptIns} provisioned`)}
+    ${stat("Insurance opt-in", a.ordersPaid ? `${Math.round((a.insuranceOptIns / a.ordersPaid) * 100)}%` : "0%", "of paid orders")}
+  </div>
+  <div class="card"><b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">Delivery methods</b><div style="margin-top:10px">${methodBars}</div></div>
+  <div class="card"><b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">Recent orders</b><div style="margin-top:10px">${orderRows}</div></div>`);
 }
 
 export function insurancePage(rows) {

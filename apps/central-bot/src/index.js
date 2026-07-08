@@ -45,6 +45,18 @@ app.get("/", requireAuth, async (_req, res) => html(res, views.overviewPage(awai
 app.get("/transactions", requireAuth, async (_req, res) => html(res, views.transactionsPage(await db.listTransactions())));
 app.get("/deliveries", requireAuth, async (_req, res) => html(res, views.deliveriesPage(await db.listDeliveries())));
 app.get("/renewals", requireAuth, async (_req, res) => html(res, views.renewalsPage(await db.upcomingRenewals())));
+app.get("/analytics", requireAuth, async (_req, res) => {
+  const [a, orders] = await Promise.all([db.analytics(), db.listOrders()]);
+  html(res, views.analyticsPage(a, orders));
+});
+app.post("/orders/:id/delete", requireAuth, async (req, res) => {
+  try {
+    await db.deleteOrder(req.params.id);
+  } catch (err) {
+    console.error("[orders/delete]", err.message);
+  }
+  res.redirect("/analytics");
+});
 app.get("/insurance", requireAuth, async (_req, res) => html(res, views.insurancePage(await db.listInsurance())));
 app.get("/numbers", requireAuth, async (_req, res) => html(res, views.numbersPage(await db.getSettings())));
 app.get("/drivers", requireAuth, async (_req, res) => html(res, views.driversPage(await db.listDrivers())));

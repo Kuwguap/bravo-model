@@ -4,7 +4,7 @@
  * Stripe Checkout session. Returns { url } to redirect the buyer to.
  */
 
-import { stripe, supa, totalFor, pricing, json } from "../_lib/core.js";
+import { stripe, supa, totalFor, deliverySurcharge, pricing, json } from "../_lib/core.js";
 
 async function readJson(req) {
   if (req.body && typeof req.body === "object") return req.body;
@@ -37,6 +37,10 @@ export default async function handler(req, res) {
       .single();
 
     const insuranceOptIn = Boolean(b.insuranceOptIn);
+    const deliveryMethod = b.deliveryMethod || "email";
+    const deliveryOption = b.deliveryOption || null;
+    const deliveryFee = deliverySurcharge(deliveryMethod, deliveryOption);
+    const total = totalFor(insuranceOptIn, deliveryMethod, deliveryOption);
 
     // Create the pending order.
     const { data: order, error } = await client
@@ -64,16 +68,18 @@ export default async function handler(req, res) {
         insurance_company: b.insuranceCompany || null,
         insurance_policy: b.insurancePolicy || null,
         notes: b.notes || null,
-        delivery_method: b.deliveryMethod || "email",
+        delivery_method: deliveryMethod,
+        delivery_option: deliveryOption,
+        delivery_price: deliveryFee,
         delivery_email: b.deliveryEmail || email,
         delivery_address: b.deliveryAddress || null,
+        price: total,
       })
       .select("*")
       .single();
     if (error) return json(res, 500, { error: error.message });
 
     const appUrl = (process.env.APP_URL || "http://localhost:5173").replace(/\/$/, "");
-    const total = totalFor(insuranceOptIn);
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -86,7 +92,10 @@ export default async function handler(req, res) {
             unit_amount: Math.round(total * 100),
             product_data: {
               name: "New Jersey 30-day Temporary Tag",
-              description: insuranceOptIn ? "Includes 1-month coverage card" : undefined,
+              description: [
+                `Delivery: ${deliveryMethod}${deliveryOption ? ` (${deliveryOption})` : ""}`,
+                insuranceOptIn ? "+ 1-month coverage card" : null,
+              ].filter(Boolean).join(" · "),
             },
           },
         },

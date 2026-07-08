@@ -1,4 +1,4 @@
-import { pricing } from "./_lib/core.js";
+import { pricing, DELIVERY } from "./_lib/core.js";
 
 /** Public config for the browser (no secrets). */
 export default function handler(req, res) {
@@ -9,6 +9,7 @@ export default function handler(req, res) {
       tagPrice: pricing.tag,
       insuranceOptInPrice: pricing.insuranceOptIn,
       renewalPeriodDays: Number(process.env.RENEWAL_PERIOD_DAYS || 28),
+      delivery: DELIVERY,
     }),
   );
 }
