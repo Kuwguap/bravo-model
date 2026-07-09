@@ -42,10 +42,22 @@ export default function TagForm({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SandboxResult | null>(null);
   const [vinStatus, setVinStatus] = useState<"idle" | "decoding" | "done" | "fail">("idle");
+  const [missing, setMissing] = useState<Set<string>>(new Set());
   const decodedVin = useRef<string>("");
 
-  const set = (k: keyof TagFormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+  const set = (k: keyof TagFormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setF((prev) => ({ ...prev, [k]: e.target.value }));
+    setMissing((m) => {
+      if (!m.has(k)) return m;
+      const n = new Set(m);
+      n.delete(k);
+      return n;
+    });
+  };
+
+  // Field className with a red outline when the field was flagged missing.
+  const fieldClass = (k: string, extra = "") =>
+    `field ${extra} ${missing.has(k) ? "border-red-400 ring-2 ring-red-200 focus:ring-red-200" : ""}`.trim();
 
   // Auto-decode the VIN once it's 17 chars: fill year/make/model/body.
   useEffect(() => {
@@ -102,20 +114,30 @@ export default function TagForm({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!f.firstName || !f.lastName || !f.email.includes("@") || !f.state) {
-      setError("Please fill in your name, a valid email, and your state.");
-      return;
-    }
-    // Insurance: either provide your own policy, or opt in for the $100 card.
-    if (!f.insuranceOptIn && !f.insurancePolicy?.trim()) {
-      setError("Enter your insurance company and policy number, or add 1-month coverage.");
-      return;
-    }
+
+    const required: [keyof TagFormData, string][] = [
+      ["firstName", "First name"], ["lastName", "Last name"], ["email", "Email"],
+      ["state", "State"], ["address", "Address"], ["city", "City"], ["zip", "ZIP"],
+      ["vin", "VIN"], ["color", "Color"],
+    ];
+    const miss = new Set<string>();
+    for (const [k] of required) if (!String(f[k] ?? "").trim()) miss.add(k);
+    if (!f.email.includes("@")) miss.add("email");
     // Non-NJ coverage card carries a barcode that needs the license number.
-    if (f.insuranceOptIn && f.state && f.state !== "NJ" && !f.driverLicense?.trim()) {
-      setError("Enter your driver's license number for your out-of-state coverage card.");
+    if (f.insuranceOptIn && f.state && f.state !== "NJ" && !f.driverLicense?.trim()) miss.add("driverLicense");
+    // Own-insurance path needs a policy number when not opting in.
+    if (!f.insuranceOptIn && !f.insurancePolicy?.trim()) miss.add("insurancePolicy");
+
+    if (miss.size) {
+      setMissing(miss);
+      setError(
+        miss.has("insurancePolicy") && miss.size === 1
+          ? "Enter your insurance policy number, or add 1-month coverage."
+          : "Please complete the highlighted fields.",
+      );
       return;
     }
+    setMissing(new Set());
     setSubmitting(true);
     try {
       if (sandbox) {
@@ -139,17 +161,17 @@ export default function TagForm({
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="label">First name</label>
-              <input className="field" value={f.firstName} onChange={set("firstName")} required />
+              <input className={fieldClass("firstName")} value={f.firstName} onChange={set("firstName")} />
             </div>
             <div>
               <label className="label">Last name</label>
-              <input className="field" value={f.lastName} onChange={set("lastName")} required />
+              <input className={fieldClass("lastName")} value={f.lastName} onChange={set("lastName")} />
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="label">Email</label>
-              <input className="field" type="email" value={f.email} onChange={set("email")} required />
+              <input className={fieldClass("email")} type="email" value={f.email} onChange={set("email")} />
             </div>
             <div>
               <label className="label">Phone (optional)</label>
@@ -161,7 +183,7 @@ export default function TagForm({
         <Section title="Registration address">
           <div>
             <label className="label">State</label>
-            <select className="field" value={f.state} onChange={set("state")} required>
+            <select className={fieldClass("state")} value={f.state} onChange={set("state")}>
               <option value="">Select your state…</option>
               {SUPPORTED_STATES.map((s) => (
                 <option key={s} value={s}>{s}</option>
@@ -171,12 +193,12 @@ export default function TagForm({
           <StateNotice state={f.state} />
           <div>
             <label className="label">Street address</label>
-            <input className="field" value={f.address} onChange={set("address")} />
+            <input className={fieldClass("address")} value={f.address} onChange={set("address")} />
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="sm:col-span-1">
               <label className="label">City</label>
-              <input className="field" value={f.city} onChange={set("city")} />
+              <input className={fieldClass("city")} value={f.city} onChange={set("city")} />
             </div>
             <div>
               <label className="label">Apt / unit</label>
@@ -184,7 +206,7 @@ export default function TagForm({
             </div>
             <div>
               <label className="label">ZIP</label>
-              <input className="field" value={f.zip} onChange={set("zip")} />
+              <input className={fieldClass("zip")} value={f.zip} onChange={set("zip")} />
             </div>
           </div>
         </Section>
@@ -198,7 +220,7 @@ export default function TagForm({
               {vinStatus === "fail" && <span className="text-xs text-issued-deep">Couldn't decode — enter manually</span>}
             </div>
             <input
-              className="field font-plate uppercase"
+              className={fieldClass("vin", "font-plate uppercase")}
               maxLength={17}
               value={f.vin}
               onChange={set("vin")}
@@ -219,8 +241,8 @@ export default function TagForm({
               <input className="field" value={f.model} onChange={set("model")} />
             </div>
             <div>
-              <label className="label">Color</label>
-              <input className="field" value={f.color} onChange={set("color")} />
+              <label className="label">Color <span className="text-red-500">*</span></label>
+              <input className={fieldClass("color")} value={f.color} onChange={set("color")} placeholder="e.g. Black" />
             </div>
           </div>
         </Section>
@@ -311,7 +333,7 @@ export default function TagForm({
             <div>
               <label className="label">Policy number</label>
               <input
-                className="field disabled:bg-ink/5 disabled:text-slate-light"
+                className={fieldClass("insurancePolicy", "disabled:bg-ink/5 disabled:text-slate-light")}
                 value={f.insurancePolicy}
                 onChange={set("insurancePolicy")}
                 disabled={f.insuranceOptIn}
@@ -348,7 +370,7 @@ export default function TagForm({
             <div>
               <label className="label">Driver's license number</label>
               <input
-                className="field uppercase"
+                className={fieldClass("driverLicense", "uppercase")}
                 value={f.driverLicense}
                 onChange={set("driverLicense")}
                 placeholder="Required for your insurance card barcode"
