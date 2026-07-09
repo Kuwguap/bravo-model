@@ -71,8 +71,8 @@ export function totalFor(insuranceOptIn, method, option) {
  */
 export async function insertOrder(client, row) {
   let res = await client.from("orders").insert(row).select("*").single();
-  if (res.error && /delivery_option|delivery_price/.test(res.error.message || "")) {
-    const { delivery_option, delivery_price, ...rest } = row;
+  if (res.error && /delivery_option|delivery_price|driver_license/.test(res.error.message || "")) {
+    const { delivery_option, delivery_price, driver_license, ...rest } = row;
     res = await client.from("orders").insert(rest).select("*").single();
   }
   return res;

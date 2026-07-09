@@ -37,6 +37,7 @@ export interface TagFormData {
   insuranceOptIn: boolean;
   insuranceCompany?: string;
   insurancePolicy?: string;
+  driverLicense?: string;
   notes?: string;
   deliveryMethod?: string;
   deliveryOption?: string;

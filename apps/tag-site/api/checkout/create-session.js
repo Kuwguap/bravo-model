@@ -65,6 +65,7 @@ export default async function handler(req, res) {
         insurance_opt_in: insuranceOptIn,
         insurance_company: b.insuranceCompany || null,
         insurance_policy: b.insurancePolicy || null,
+        driver_license: b.driverLicense || null,
         notes: b.notes || null,
         delivery_method: deliveryMethod,
         delivery_option: deliveryOption,

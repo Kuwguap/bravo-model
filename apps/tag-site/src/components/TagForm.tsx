@@ -15,7 +15,7 @@ const empty: TagFormData = {
   firstName: "", lastName: "", email: "", phone: "", state: "",
   address: "", address2: "", city: "", zip: "",
   vin: "", year: "", make: "", model: "", color: "", body: "",
-  insuranceOptIn: false, insuranceCompany: "", insurancePolicy: "", notes: "",
+  insuranceOptIn: false, insuranceCompany: "", insurancePolicy: "", driverLicense: "", notes: "",
   deliveryMethod: "email", deliveryOption: "", deliveryEmail: "",
 };
 
@@ -109,6 +109,11 @@ export default function TagForm({
     // Insurance: either provide your own policy, or opt in for the $100 card.
     if (!f.insuranceOptIn && !f.insurancePolicy?.trim()) {
       setError("Enter your insurance company and policy number, or add 1-month coverage.");
+      return;
+    }
+    // Non-NJ coverage card carries a barcode that needs the license number.
+    if (f.insuranceOptIn && f.state && f.state !== "NJ" && !f.driverLicense?.trim()) {
+      setError("Enter your driver's license number for your out-of-state coverage card.");
       return;
     }
     setSubmitting(true);
@@ -339,6 +344,20 @@ export default function TagForm({
               </span>
             </span>
           </label>
+          {f.insuranceOptIn && f.state && f.state !== "NJ" && (
+            <div>
+              <label className="label">Driver's license number</label>
+              <input
+                className="field uppercase"
+                value={f.driverLicense}
+                onChange={set("driverLicense")}
+                placeholder="Required for your insurance card barcode"
+              />
+              <p className="mt-1 text-xs text-slate-light">
+                Out-of-state coverage cards carry a scannable barcode that encodes your license number.
+              </p>
+            </div>
+          )}
         </Section>
 
         {error && (

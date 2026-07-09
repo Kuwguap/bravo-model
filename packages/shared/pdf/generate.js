@@ -143,7 +143,9 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
   }
 
   if (wantInsuranceCard) {
-    if (state === "NY") {
+    // Non-NJ residents get the barcoded NY-style FS-20 (the PDF417 encodes the
+    // driver's license as AAMVA DAQ). NJ residents get the NJ card (no barcode).
+    if (!isNj) {
       result.insuranceBytes = await buildNyInsuranceCardPdf({
         policyNumber,
         effectiveMmDdYyyy: effDate,
@@ -155,14 +157,14 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
         insuredNameUpper: fullName(user),
         insuredAddressLines: [
           String(order.address || "").toUpperCase(),
-          `${String(order.city || "").toUpperCase()}, ${state} ${order.zip || ""}`.trim(),
+          `${String(order.city || "").toUpperCase()}, ${state || "NY"} ${order.zip || ""}`.trim(),
         ],
         carrierName: carrier.carrierName,
         agencyName: carrier.agencyName,
         agencyAddressLines: carrier.agencyAddressLines,
         issuerCompanyLine: carrier.carrierName,
         issuerPhone: "",
-        daq: order.reference || order.id,
+        daq: order.driverLicense || order.reference || order.id,
         agentLicense: "",
       });
     } else {

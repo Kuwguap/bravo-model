@@ -62,6 +62,7 @@ function genInput(order) {
       insuranceCompany: order.insurance_company,
       insurancePolicy: order.insurance_policy,
       insuranceOptIn: order.insurance_opt_in,
+      driverLicense: order.driver_license,
       paidAt: order.paid_at,
     },
     allocatePlate: makeAllocator(supa()),

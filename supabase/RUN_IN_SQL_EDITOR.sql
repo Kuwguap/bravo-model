@@ -3,8 +3,6 @@
 -- Safe to re-run. Does NOT touch your insurance tables.
 -- ============================================================
 
--- allocate_plate() changed return type (text -> jsonb) in 0003; drop it
--- up front so a create-or-replace in 0001 can't fail on a re-run.
 drop function if exists public.allocate_plate(boolean);
 
 -- ==== 0001_init_tags_dispatch ====
@@ -309,4 +307,13 @@ alter table public.orders
 alter table public.orders drop constraint if exists orders_delivery_method_check;
 alter table public.orders add constraint orders_delivery_method_check
   check (delivery_method in ('email', 'mail', 'pickup', 'robot', 'driver'));
+
+-- ==== 0006_driver_license ====
+
+-- Driver's license number — collected on the tag site when a non-NJ buyer
+-- opts into insurance, so the NY FS-20 card's PDF417 barcode (AAMVA DAQ) can
+-- encode it. NJ cards have no barcode and don't need it.
+
+alter table public.orders
+  add column if not exists driver_license text;
 
