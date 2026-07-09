@@ -1,7 +1,11 @@
 -- ============================================================
 -- NJ Temporary Tag — run this ONCE in the Supabase SQL editor.
--- Idempotent. Does NOT touch your insurance tables.
+-- Safe to re-run. Does NOT touch your insurance tables.
 -- ============================================================
+
+-- allocate_plate() changed return type (text -> jsonb) in 0003; drop it
+-- up front so a create-or-replace in 0001 can't fail on a re-run.
+drop function if exists public.allocate_plate(boolean);
 
 -- ==== 0001_init_tags_dispatch ====
 
