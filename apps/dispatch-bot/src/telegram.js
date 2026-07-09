@@ -77,6 +77,29 @@ export async function sendDocument(chatId, bytes, filename, caption) {
   }
 }
 
+/** Send a photo (Uint8Array/Buffer). Uses multipart upload. */
+export async function sendPhoto(chatId, bytes, filename, caption) {
+  try {
+    const form = new FormData();
+    form.append("chat_id", String(chatId));
+    if (caption) {
+      form.append("caption", caption);
+      form.append("parse_mode", "HTML");
+    }
+    form.append("photo", new Blob([bytes], { type: "image/jpeg" }), filename || "photo.jpg");
+    const res = await fetch(tg.api("sendPhoto"), { method: "POST", body: form });
+    const json = await res.json();
+    if (!json.ok) {
+      console.warn(`[telegram] sendPhoto failed:`, json.description);
+      return { ok: false, error: json.description };
+    }
+    return { ok: true, result: json.result };
+  } catch (err) {
+    console.warn(`[telegram] sendPhoto threw:`, err.message);
+    return { ok: false, error: err.message };
+  }
+}
+
 /** Download a file the user sent us (photo/document) → bytes + mime. */
 export async function downloadTelegramFile(fileId) {
   const info = await callApi("getFile", { file_id: fileId });
@@ -125,4 +148,43 @@ export const keyboards = {
     drivers.map((d) => [
       { text: `👤 ${d.name}`, callback_data: `drv_${draftId}_${d.id}` },
     ]),
+  /** Driver /start menu. */
+  driverMenu: () => [
+    [
+      { text: "📋 History", callback_data: "menu_history" },
+      { text: "🧾 Pay receipt", callback_data: "menu_receipt" },
+    ],
+  ],
+  /** One button per delivery still needing a receipt. */
+  receiptPicker: (items) =>
+    items.map((it) => [
+      { text: `🧾 ${it.reference}${it.plate ? ` — ${it.plate}` : ""}`, callback_data: `pr_${it.deliveryId}` },
+    ]),
+  /** /appeal: first 2 buttons side by side = last 2 order refs; own row = manual entry. */
+  appealPicker: (recentOrders) => {
+    const row1 = recentOrders.slice(0, 2).map((o) => ({
+      text: o.reference_code || String(o.id).slice(0, 8).toUpperCase(),
+      callback_data: `arf_${o.id}`,
+    }));
+    return [row1, [{ text: "🔎 Enter reference number", callback_data: "amn" }]].filter((r) => r.length);
+  },
+  submitOrDescribe: () => [
+    [
+      { text: "✅ Submit", callback_data: "asub" },
+      { text: "📝 Add description", callback_data: "adsc" },
+    ],
+  ],
+  appealSupervisor: (appealId) => [
+    [{ text: "👀 Review", callback_data: `arev_${appealId}` }],
+    [
+      { text: "⏭ Ignore", callback_data: `aign_${appealId}` },
+      { text: "❌ Decline", callback_data: `adcl_${appealId}` },
+    ],
+  ],
+  appealDecision: (appealId) => [
+    [
+      { text: "✅ Accept appeal", callback_data: `afacc_${appealId}` },
+      { text: "❌ Decline appeal", callback_data: `afdec_${appealId}` },
+    ],
+  ],
 };

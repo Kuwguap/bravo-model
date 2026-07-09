@@ -134,13 +134,14 @@ export async function randomizeStarts() {
 // ─── Analytics ───────────────────────────────────────────────────────────────
 export async function analytics() {
   const client = supa();
-  const [orders, users, profiles, policies, visits, uniqueVisitors] = await Promise.all([
+  const [orders, users, profiles, policies, visits, uniqueVisitors, appeals] = await Promise.all([
     client.from("orders").select("status, price, delivery_method, insurance_opt_in, insurance_provisioned, paid_at"),
     client.from("users").select("id", { count: "exact", head: true }),
     client.from("profiles").select("id", { count: "exact", head: true }),
     client.from("policies").select("id", { count: "exact", head: true }).eq("status", "active"),
     client.from("visits").select("id", { count: "exact", head: true }),
     client.from("visits").select("visitor_id").not("visitor_id", "is", null).limit(50000),
+    client.from("appeals").select("status"),
   ]);
   const all = orders.data || [];
   const paid = all.filter((o) => o.status === "paid");
@@ -169,6 +170,8 @@ export async function analytics() {
     last7Revenue: rev(last7),
     visits: visits.count || 0,
     uniqueVisitors: new Set((uniqueVisitors.data || []).map((r) => r.visitor_id)).size,
+    appealsPending: (appeals.data || []).filter((a) => a.status === "submitted" || a.status === "reviewing").length,
+    appealsTotal: (appeals.data || []).length,
   };
 }
 
@@ -201,6 +204,27 @@ export async function listInsurance(limit = 100) {
     .order("paid_at", { ascending: false })
     .limit(limit);
   return data || [];
+}
+
+// ─── Appeals (driver-filed, supervisor-reviewed) ─────────────────────────────
+export async function listAppeals(limit = 100) {
+  const { data, error } = await supa()
+    .from("appeals")
+    .select("*, drivers(name), supervisors(name), orders(reference_code, plate)")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) return [];
+  const rows = data || [];
+  for (const r of rows) {
+    if (r.image_path) {
+      try {
+        r.image_url = await signedUrl(supa(), BUCKETS.receipts, r.image_path, 3600);
+      } catch {
+        r.image_url = null;
+      }
+    }
+  }
+  return rows;
 }
 
 // ─── Renewals ────────────────────────────────────────────────────────────────

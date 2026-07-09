@@ -100,6 +100,53 @@ export async function parseTagInfoDocument(bytes, mimeType = "image/jpeg") {
   ]);
 }
 
+const RECEIPT_SYSTEM_PROMPT =
+  "You read receipts and invoices. Reply with a single JSON object only: " +
+  '{"amount": <number or null>, "currency": "<3-letter code or null>"}. ' +
+  "`amount` is the final TOTAL charged (not a subtotal, not tax alone) as a plain " +
+  "number with up to 2 decimals. If you cannot find a clear total, use null. Never invent a number.";
+
+/**
+ * Read the total dollar amount off a photographed/scanned receipt.
+ * @param {Uint8Array|Buffer} bytes
+ * @param {string} mimeType e.g. "image/jpeg"
+ * @returns {Promise<{amount: number|null, currency: string|null}>}
+ */
+export async function parseReceiptAmount(bytes, mimeType = "image/jpeg") {
+  if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not set");
+  const b64 = Buffer.from(bytes).toString("base64");
+  const dataUrl = `data:${mimeType};base64,${b64}`;
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: OPENAI_MODEL,
+      temperature: 0,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: RECEIPT_SYSTEM_PROMPT },
+        {
+          role: "user",
+          content: [
+            { type: "text", text: "What is the total amount on this receipt?" },
+            { type: "image_url", image_url: { url: dataUrl } },
+          ],
+        },
+      ],
+    }),
+    signal: AbortSignal.timeout(30000),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`OpenAI HTTP ${res.status}: ${body.slice(0, 300)}`);
+  }
+  const json = await res.json();
+  const content = json.choices?.[0]?.message?.content || "{}";
+  const parsed = JSON.parse(content);
+  const amount = parsed.amount == null ? null : Number(parsed.amount);
+  return { amount: Number.isFinite(amount) ? amount : null, currency: parsed.currency || null };
+}
+
 /** True when a key is configured — lets callers show a helpful message. */
 export function openAiEnabled() {
   return Boolean(OPENAI_API_KEY);

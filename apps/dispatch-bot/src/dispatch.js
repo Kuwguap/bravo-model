@@ -41,6 +41,11 @@ function esc(v) {
 function fullName(o) {
   return `${o.first_name || ""} ${o.last_name || ""}`.trim() || "Customer";
 }
+/** Driver-facing short reference (e.g. CD356E0D) — same code printed via the
+ * DB trigger on every order, so drivers can quote it verbally or type it. */
+export function referenceCode(order) {
+  return order.reference_code || String(order.id || "").slice(0, 8).toUpperCase();
+}
 
 /** Map a DB order row → generateDocumentsForOrder() input. */
 function genInput(order) {
@@ -72,11 +77,11 @@ function genInput(order) {
 function claimSummary(order) {
   return [
     "🆕 <b>New tag order — accept to claim</b>",
-    `Order #${esc(String(order.id).slice(0, 8))}`,
+    `Order #${esc(referenceCode(order))}`,
     `• ${esc(fullName(order))}`,
     `• ${esc([order.year, order.make, order.model].filter(Boolean).join(" "))}`,
     `• Plate <b>${esc(order.plate)}</b>`,
-    order.state ? `• ${esc(order.state)}` : null,
+    order.state ? `• ${esc([order.state, order.zip].filter(Boolean).join(" "))}` : null,
     "",
     "Tap <b>Accept</b> to receive the PDF + full delivery details here and by email.",
   ].filter(Boolean).join("\n");
@@ -86,7 +91,7 @@ function fullDetails(order) {
   const reg = [order.address, order.address2, `${order.city || ""} ${order.state || ""} ${order.zip || ""}`.trim()]
     .filter(Boolean).join(", ");
   return [
-    `✅ <b>Order #${esc(String(order.id).slice(0, 8))}</b>`,
+    `✅ <b>Order #${esc(referenceCode(order))}</b>`,
     `<b>Name:</b> ${esc(fullName(order))}`,
     order.phone ? `<b>Phone:</b> ${esc(order.phone)}` : null,
     order.delivery_method ? `<b>Delivery:</b> ${esc(order.delivery_method)}` : null,
@@ -201,7 +206,7 @@ function scheduleFallback(orderId) {
       for (const d of drivers) {
         await sendMessage(
           d.telegram_id,
-          `⏰ <b>Still unclaimed</b> — Order #${esc(String(order.id).slice(0, 8))} (${esc(order.plate)}). First to accept gets it.`,
+          `⏰ <b>Still unclaimed</b> — Order #${esc(referenceCode(order))} (${esc(order.plate)}). First to accept gets it.`,
           { keyboard: keyboards.claim(order.id) },
         );
       }
@@ -232,7 +237,7 @@ export async function handleAccept({ orderId, driver, callbackQueryId, chatId, m
       ? await driverById(order.telegram_accepted_driver_id)
       : null;
     await answerCallbackQuery(callbackQueryId, `Already claimed${winner ? ` by ${winner.name}` : ""}.`, { alert: true });
-    await editMessageText(chatId, messageId, `🔒 <b>Claimed${winner ? ` by ${esc(winner.name)}` : ""}</b> — Order #${esc(String(orderId).slice(0, 8))}.`);
+    await editMessageText(chatId, messageId, `🔒 <b>Claimed${winner ? ` by ${esc(winner.name)}` : ""}</b> — Order #${esc(referenceCode(order))}.`);
     return;
   }
 
@@ -248,7 +253,7 @@ export async function handleAccept({ orderId, driver, callbackQueryId, chatId, m
   const claimIds = order.telegram_claim_message_ids || {};
   for (const [tgId, msgId] of Object.entries(claimIds)) {
     if (String(tgId) === String(driver.telegram_id)) continue;
-    await editMessageText(tgId, msgId, `🔒 <b>Claimed by ${esc(driver.name)}</b> — Order #${esc(String(orderId).slice(0, 8))}.`);
+    await editMessageText(tgId, msgId, `🔒 <b>Claimed by ${esc(driver.name)}</b> — Order #${esc(referenceCode(order))}.`);
   }
 
   // Send the PDF to the winning driver in Telegram, and email PDF + details
@@ -262,7 +267,9 @@ export async function handleAccept({ orderId, driver, callbackQueryId, chatId, m
 
 export async function handleDecline({ orderId, callbackQueryId, chatId, messageId }) {
   await answerCallbackQuery(callbackQueryId, "Declined.");
-  await editMessageText(chatId, messageId, `↩️ You declined Order #${esc(String(orderId).slice(0, 8))}. Others can still claim it.`);
+  const order = await getOrder(orderId).catch(() => null);
+  const ref = order ? referenceCode(order) : String(orderId).slice(0, 8).toUpperCase();
+  await editMessageText(chatId, messageId, `↩️ You declined Order #${esc(ref)}. Others can still claim it.`);
 }
 
 /**

@@ -44,6 +44,7 @@ app.post("/logout", (req, res) => {
 app.get("/", requireAuth, async (_req, res) => html(res, views.overviewPage(await db.overview())));
 app.get("/transactions", requireAuth, async (_req, res) => html(res, views.transactionsPage(await db.listTransactions())));
 app.get("/deliveries", requireAuth, async (_req, res) => html(res, views.deliveriesPage(await db.listDeliveries())));
+app.get("/appeals", requireAuth, async (_req, res) => html(res, views.appealsPage(await db.listAppeals())));
 app.get("/renewals", requireAuth, async (_req, res) => html(res, views.renewalsPage(await db.upcomingRenewals())));
 app.get("/analytics", requireAuth, async (_req, res) => {
   const [a, orders] = await Promise.all([db.analytics(), db.listOrders()]);
@@ -66,6 +67,7 @@ app.post("/numbers", requireAuth, async (req, res) => {
   const numFields = [
     "nj_plate_digits", "nj_plate_next_number", "nj_car_next_number",
     "non_nj_plate_digits", "non_nj_plate_next_number", "non_nj_car_next_number",
+    "default_driver_pay_amount",
   ];
   const patch = { nj_plate_prefix: req.body.nj_plate_prefix, non_nj_plate_suffix: req.body.non_nj_plate_suffix };
   for (const f of numFields) if (req.body[f] !== "") patch[f] = Number(req.body[f]);

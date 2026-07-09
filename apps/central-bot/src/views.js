@@ -68,7 +68,7 @@ function layout(active, title, body) {
 <header class="top"><div class="topbar"><span class="brand"><b>NJ</b> Control</span>
 <form class="inline" method="post" action="/logout"><button class="btn ghost mini" style="color:#cdd3db;border-color:#39424f">Sign out</button></form></div>
 <nav class="tabs"><div class="wrap" style="display:flex;gap:4px;flex-wrap:wrap;padding:0">
-${tab("/", "Overview")}${tab("/analytics", "Analytics")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/renewals", "Renewals")}${tab("/insurance", "Insurance")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
+${tab("/", "Overview")}${tab("/analytics", "Analytics")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/appeals", "Appeals")}${tab("/renewals", "Renewals")}${tab("/insurance", "Insurance")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
 </div></nav></header>
 <main class="wrap">${body}</main></body></html>`;
 }
@@ -114,15 +114,38 @@ export function transactionsPage(rows) {
 
 export function deliveriesPage(rows) {
   const body = rows.length
-    ? `<table><thead><tr><th>Assigned</th><th>Order</th><th>Driver</th><th>Status</th><th>Receipt</th></tr></thead><tbody>
+    ? `<table><thead><tr><th>Assigned</th><th>Order</th><th>Driver</th><th>Status</th><th>Set</th><th>Receipt</th><th>Diff</th><th>Proof</th></tr></thead><tbody>
     ${rows.map((r) => {
       const o = r.orders || {};
       const who = `${o.first_name || ""} ${o.last_name || ""}`.trim();
-      return `<tr><td>${dt(r.assigned_at)}</td><td>${esc(o.plate || "—")} <span class="muted">${esc(who)}</span></td><td>${esc(r.drivers?.name || "—")}</td><td><span class="pill ${esc(r.status)}">${esc(r.status)}</span></td><td>${r.receipt_url ? `<a href="${esc(r.receipt_url)}" target="_blank">View</a>` : "—"}</td></tr>`;
+      const ref = o.reference_code || "—";
+      const setAmt = r.receipt_amount_set != null ? `$${Number(r.receipt_amount_set).toFixed(2)}` : "—";
+      const trueAmt = r.receipt_amount_true != null ? `$${Number(r.receipt_amount_true).toFixed(2)}` : "—";
+      const diff = r.receipt_amount_diff != null
+        ? `$${Number(r.receipt_amount_diff).toFixed(2)} (${r.receipt_amount_diff_pct ?? 0}%)`
+        : "—";
+      return `<tr><td>${dt(r.assigned_at)}</td><td>${esc(o.plate || "—")} <span class="muted">${esc(ref)} · ${esc(who)}</span></td><td>${esc(r.drivers?.name || "—")}</td><td><span class="pill ${esc(r.status)}">${esc(r.status)}</span></td><td>${setAmt}</td><td>${trueAmt}</td><td class="muted">${diff}</td><td>${r.receipt_url ? `<a href="${esc(r.receipt_url)}" target="_blank">View</a>` : "—"}</td></tr>`;
     }).join("")}
     </tbody></table>`
     : `<div class="empty">No deliveries yet.</div>`;
-  return layout("/deliveries", "Deliveries", `<h1 class="page">Deliveries</h1><div class="card">${body}</div>`);
+  return layout("/deliveries", "Deliveries", `<h1 class="page">Deliveries</h1>
+  <div class="card"><p class="muted">Set = the expected driver-pay amount for the order. Receipt = the total OpenAI read off the driver's uploaded receipt. Diff = Set − Receipt, shown as a % of Set.</p></div>
+  <div class="card">${body}</div>`);
+}
+
+export function appealsPage(rows) {
+  const statusPill = (s) => (s === "accepted" ? "delivered" : s === "declined" ? "due" : s === "reviewing" ? "accepted" : "assigned");
+  const body = rows.length
+    ? `<table><thead><tr><th>When</th><th>Order</th><th>Driver</th><th>Status</th><th>Reviewer</th><th>Description</th><th>Proof</th></tr></thead><tbody>
+    ${rows.map((r) => {
+      const o = r.orders || {};
+      return `<tr><td>${dt(r.created_at)}</td><td>${esc(o.reference_code || "—")} <span class="muted">${esc(o.plate || "")}</span></td><td>${esc(r.drivers?.name || "—")}</td><td><span class="pill ${statusPill(r.status)}">${esc(r.status)}</span></td><td class="muted">${esc(r.supervisors?.name || "—")}</td><td class="muted">${esc((r.description || "—").slice(0, 90))}</td><td>${r.image_url ? `<a href="${esc(r.image_url)}" target="_blank">View</a>` : "—"}</td></tr>`;
+    }).join("")}
+    </tbody></table>`
+    : `<div class="empty">No appeals yet.</div>`;
+  return layout("/appeals", "Appeals", `<h1 class="page">Appeals</h1>
+  <div class="card"><p class="muted">Drivers file an appeal from the bot with /appeal when an order wasn't valid or was cancelled by the client. Supervisors Review (claims it), Ignore, or Decline; the reviewer then makes the final Accept/Decline call.</p></div>
+  <div class="card">${body}</div>`);
 }
 
 export function renewalsPage(rows) {
@@ -174,6 +197,7 @@ export function analyticsPage(a, orders, flash) {
     ${stat("Last 7 days", a.last7Count, `${money(Math.round(a.last7Revenue * 100))} revenue`)}
     ${stat("Active policies", a.activePolicies, `${a.insuranceProvisioned}/${a.insuranceOptIns} provisioned`)}
     ${stat("Insurance opt-in", a.ordersPaid ? `${Math.round((a.insuranceOptIns / a.ordersPaid) * 100)}%` : "0%", "of paid orders")}
+    ${stat("Appeals", a.appealsPending ?? 0, `${a.appealsTotal ?? 0} total`)}
   </div>
   <div class="card"><b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">Delivery methods</b><div style="margin-top:10px">${methodBars}</div></div>
   <div class="card"><b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">Recent orders</b><div style="margin-top:10px">${orderRows}</div></div>`);
@@ -231,6 +255,11 @@ export function numbersPage(s, flash) {
       ${num("non_nj_plate_digits", s.non_nj_plate_digits ?? 6)}
       ${num("non_nj_plate_next_number", s.non_nj_plate_next_number ?? 150706)}
       ${num("non_nj_car_next_number", s.non_nj_car_next_number ?? 6000000000)}
+      <div></div>
+    </div>
+    <b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px;display:block;margin-top:16px">Driver pay</b>
+    <div class="row" style="grid-template-columns:1fr auto;margin-top:8px">
+      <div class="fld"><label>default_driver_pay_amount ($ per order)</label><input name="default_driver_pay_amount" type="number" step="0.01" value="${esc(s.default_driver_pay_amount ?? 150)}"></div>
       <button class="btn">Save</button>
     </div>
   </form></div>`);
