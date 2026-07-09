@@ -89,7 +89,7 @@ export async function deleteSupervisor(id) {
 export async function listDeliveries(limit = 100) {
   const { data } = await supa()
     .from("deliveries")
-    .select("*, drivers(name), orders(plate, first_name, last_name, state)")
+    .select("*, drivers(name), orders(reference_code, plate, first_name, last_name, state)")
     .order("assigned_at", { ascending: false })
     .limit(limit);
   const rows = data || [];
