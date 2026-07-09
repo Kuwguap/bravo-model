@@ -5,6 +5,7 @@
  */
 
 import crypto from "node:crypto";
+import { generateAbpPolicy } from "@speedy/shared/pdf";
 import { config } from "./config.js";
 import { updateOrder } from "./db.js";
 
@@ -20,16 +21,6 @@ export function strongPassword(len = 12) {
   return out;
 }
 
-/** Unique alternating letter/digit policy number, e.g. NJC-4A9B2C7D. */
-function policyNumber() {
-  const L = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-  const D = "23456789";
-  const b = crypto.randomBytes(8);
-  let s = "";
-  for (let i = 0; i < 8; i++) s += i % 2 === 0 ? D[b[i] % D.length] : L[b[i] % L.length];
-  return `NJC-${s}`;
-}
-
 const iso = (d) => d.toISOString().slice(0, 10);
 
 /**
@@ -43,7 +34,7 @@ export async function provisionInsurance(order, insuranceBytes) {
   if (!email) return { ok: false, error: "no customer email" };
 
   const password = strongPassword(12);
-  const policy = policyNumber();
+  const policy = generateAbpPolicy();
   const now = new Date();
   const exp = new Date(now.getTime() + 30 * 86400000);
 

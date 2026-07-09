@@ -39,9 +39,27 @@ function fullName(user) {
   return `${user.firstName || ""} ${user.lastName || ""}`.trim().toUpperCase() || "INSURED PARTY";
 }
 
-function makePolicyNumber(orderId) {
-  const base = String(orderId || Date.now()).replace(/[^a-z0-9]/gi, "").toUpperCase();
-  return `KT-${base.slice(0, 8).padStart(8, "0")}`;
+/**
+ * Rotating National Specialty policy number: `ABP63` + 8 digits
+ * (e.g. ABP6300166232). Matches the krabinsurancebot / National Specialty
+ * Insurance Company numbering used on both NY FS-20 and NJ TEI cards.
+ */
+export function generateAbpPolicy() {
+  const n = Math.floor(Math.random() * 100_000_000);
+  return `ABP63${String(n).padStart(8, "0")}`;
+}
+
+/**
+ * National Specialty carrier block. Carrier code is 169 for NJ residents,
+ * 707 for everyone else (non-resident). Serviced by AIPSO-SAIP.
+ */
+export function nationalSpecialtyCarrier(isNj) {
+  return {
+    code: isNj ? "169" : "707",
+    carrierName: `${isNj ? "169" : "707"} National Specialty Insurance Company`,
+    agencyName: "Serviced by AIPSO-SAIP",
+    agencyAddressLines: ["PO Box 6400", "Providence, RI 02940-6200"],
+  };
 }
 
 /**
@@ -71,9 +89,11 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
   const effDate = ymd(issued);
   const expDate = ymd(expiry);
 
-  const policyNumber = order.insurancePolicy || makePolicyNumber(order.id);
-  const insuranceCompany =
-    order.insuranceCompany || (order.insuranceOptIn ? "Kingsman Tags 30-Day Coverage" : "");
+  const isNj = state === "NJ";
+  const carrier = nationalSpecialtyCarrier(isNj);
+  // Rotating National Specialty policy (unless the buyer supplied their own).
+  const policyNumber = order.insurancePolicy || generateAbpPolicy();
+  const insuranceCompany = order.insuranceCompany || "National Specialty Ins";
   const wantInsuranceCard = !!order.insuranceOptIn;
 
   // Always issue an NJ-style temporary plate, regardless of buyer state.
@@ -137,10 +157,10 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
           String(order.address || "").toUpperCase(),
           `${String(order.city || "").toUpperCase()}, ${state} ${order.zip || ""}`.trim(),
         ],
-        carrierName: "169 KINGSMAN TAGS COVERAGE",
-        agencyName: "KINGSMAN TAGS INSURANCE",
-        agencyAddressLines: ["PO BOX 6400", "PROVIDENCE, RI 02940-6200"],
-        issuerCompanyLine: "169 KINGSMAN COVERAGE GROUP",
+        carrierName: carrier.carrierName,
+        agencyName: carrier.agencyName,
+        agencyAddressLines: carrier.agencyAddressLines,
+        issuerCompanyLine: carrier.carrierName,
         issuerPhone: "",
         daq: order.reference || order.id,
         agentLicense: "",
@@ -160,9 +180,9 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
           String(order.address || "").toUpperCase(),
           `${String(order.city || "").toUpperCase()}, ${state || "NJ"} ${order.zip || ""}`.trim(),
         ],
-        carrierName: "Kingsman Tags 30-Day Coverage",
-        carrierAddressLines: ["c/o Kingsman Tags", "PO Box — Service Address", "Newark, NJ 07101"],
-        formRevision: "Kingsman Tags 1-Month Plan",
+        carrierName: carrier.carrierName,
+        carrierAddressLines: [carrier.agencyName, ...carrier.agencyAddressLines],
+        formRevision: "National Specialty · AIPSO-SAIP",
         includeInfoPanel: state === "NJ",
       });
     }

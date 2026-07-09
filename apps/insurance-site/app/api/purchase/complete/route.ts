@@ -182,6 +182,10 @@ export async function POST (request: NextRequest) {
   const fullUpper = b.fullName.trim().toUpperCase()
   const daqNorm = normalizeAamvaDaq(b.daq)
 
+  // Carrier code: 169 for NJ residents, 707 for everyone else (non-resident).
+  const isNjInsured = /\bNJ\b|NEW\s*JERSEY/i.test(b.cityStateZip || '')
+  const issuerCompanyLine = `${isNjInsured ? '169' : '707'} NATIONAL SPECIALTY INSURANCE COMPANY`
+
   const pdfBytes = await buildNyInsuranceIdCardPdf({
     policyNumber,
     effectiveMmDdYyyy: effectiveStr,
@@ -194,6 +198,7 @@ export async function POST (request: NextRequest) {
     insuredAddressLines: insuredLines.map(l => l.toUpperCase()),
     daq: daqNorm,
     ...PURCHASE_CARD_ISSUER,
+    issuerCompanyLine,
   })
 
   const { subject, text } = buildPurchaseWelcomeEmail({
