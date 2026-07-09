@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 import Qwertyuiop from "./pages/Qwertyuiop";
+import { logVisit } from "./lib/api";
 
 function Header() {
   return (
@@ -22,18 +24,28 @@ function Header() {
   );
 }
 
-function Footer() {
+function Footer({ visits }: { visits: number | null }) {
   return (
     <footer className="mx-auto max-w-6xl px-5 py-10 text-sm text-slate">
       <div className="flex flex-col items-start justify-between gap-3 border-t border-ink/10 pt-6 sm:flex-row sm:items-center">
         <span>© {new Date().getFullYear()} NJ Temporary Tag</span>
-        <span className="text-slate-light">Temporary registration document service.</span>
+        <span className="text-slate-light">
+          {visits != null ? `${visits.toLocaleString()} visits · ` : ""}Temporary registration document service.
+        </span>
       </div>
     </footer>
   );
 }
 
 export default function App() {
+  const [visits, setVisits] = useState<number | null>(null);
+
+  useEffect(() => {
+    logVisit()
+      .then((r) => setVisits(r.visits))
+      .catch(() => setVisits(null));
+  }, []);
+
   return (
     <div className="flex min-h-[100dvh] flex-col">
       <Header />
@@ -45,7 +57,7 @@ export default function App() {
           <Route path="/qwertyuiop" element={<Qwertyuiop />} />
         </Routes>
       </main>
-      <Footer />
+      <Footer visits={visits} />
     </div>
   );
 }

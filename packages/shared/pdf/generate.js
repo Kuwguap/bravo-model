@@ -49,6 +49,12 @@ export function generateAbpPolicy() {
   return `ABP63${String(n).padStart(8, "0")}`;
 }
 
+/** Kingsman tag policy/binder number: `KT-` + first 8 of the order id. */
+export function makeKtPolicy(orderId) {
+  const base = String(orderId || Date.now()).replace(/[^a-z0-9]/gi, "").toUpperCase();
+  return `KT-${base.slice(0, 8).padStart(8, "0")}`;
+}
+
 /**
  * National Specialty carrier block. Carrier code is 169 for NJ residents,
  * 707 for everyone else (non-resident). Serviced by AIPSO-SAIP.
@@ -91,10 +97,18 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
 
   const isNj = state === "NJ";
   const carrier = nationalSpecialtyCarrier(isNj);
-  // Rotating National Specialty policy (unless the buyer supplied their own).
-  const policyNumber = order.insurancePolicy || generateAbpPolicy();
-  const insuranceCompany = order.insuranceCompany || "National Specialty Ins";
   const wantInsuranceCard = !!order.insuranceOptIn;
+
+  // The TAG prints the Kingsman 30-day coverage (or the buyer's own insurance).
+  const tagInsuranceCompany =
+    order.insuranceCompany || (wantInsuranceCard ? "KINGSMAN TAGS 30-DAY COVERAGE" : "");
+  const tagPolicyNumber =
+    order.insurancePolicy || (wantInsuranceCard ? makeKtPolicy(order.id) : "");
+
+  // The actual coverage CARD uses National Specialty + a rotating ABP policy.
+  // The bot can pass a pre-generated one so the card matches the provisioned
+  // account; otherwise we mint a fresh ABP number here.
+  const cardPolicyNumber = order.cardPolicyNumber || generateAbpPolicy();
 
   // Always issue an NJ-style temporary plate, regardless of buyer state.
   // NJ residents get NJ.pdf; everyone else gets NONNJ.pdf.
@@ -130,12 +144,13 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
     city: order.city,
     state: state || "NJ",
     zip: order.zip,
-    insuranceCompany,
-    insurancePolicy: policyNumber,
+    insuranceCompany: tagInsuranceCompany,
+    insurancePolicy: tagPolicyNumber,
     issuedAt: issued,
     expiresAt: expiry,
   });
   result.plate = plate;
+  result.tagPolicyNumber = tagPolicyNumber;
 
   if (state && state !== "NJ") {
     result.instructions =
@@ -147,7 +162,7 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
     // driver's license as AAMVA DAQ). NJ residents get the NJ card (no barcode).
     if (!isNj) {
       result.insuranceBytes = await buildNyInsuranceCardPdf({
-        policyNumber,
+        policyNumber: cardPolicyNumber,
         effectiveMmDdYyyy: effDate,
         expirationMmDdYyyy: expDate,
         issueMmDdYyyy: effDate,
@@ -169,7 +184,7 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
       });
     } else {
       result.insuranceBytes = await buildNjInsuranceCardPdf({
-        policyNumber,
+        policyNumber: cardPolicyNumber,
         effectiveMmDdYyyy: effDate,
         expirationMmDdYyyy: expDate,
         issuedMmDdYyyy: effDate,
@@ -188,7 +203,7 @@ export async function generateDocumentsForOrder({ user, order, allocatePlate }) 
         includeInfoPanel: state === "NJ",
       });
     }
-    result.policyNumber = policyNumber;
+    result.policyNumber = cardPolicyNumber;
   }
 
   return result;

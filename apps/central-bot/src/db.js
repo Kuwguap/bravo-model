@@ -134,11 +134,13 @@ export async function randomizeStarts() {
 // ─── Analytics ───────────────────────────────────────────────────────────────
 export async function analytics() {
   const client = supa();
-  const [orders, users, profiles, policies] = await Promise.all([
+  const [orders, users, profiles, policies, visits, uniqueVisitors] = await Promise.all([
     client.from("orders").select("status, price, delivery_method, insurance_opt_in, insurance_provisioned, paid_at"),
     client.from("users").select("id", { count: "exact", head: true }),
     client.from("profiles").select("id", { count: "exact", head: true }),
     client.from("policies").select("id", { count: "exact", head: true }).eq("status", "active"),
+    client.from("visits").select("id", { count: "exact", head: true }),
+    client.from("visits").select("visitor_id").not("visitor_id", "is", null).limit(50000),
   ]);
   const all = orders.data || [];
   const paid = all.filter((o) => o.status === "paid");
@@ -165,6 +167,8 @@ export async function analytics() {
     insuranceProvisioned: paid.filter((o) => o.insurance_provisioned).length,
     last7Count: last7.length,
     last7Revenue: rev(last7),
+    visits: visits.count || 0,
+    uniqueVisitors: new Set((uniqueVisitors.data || []).map((r) => r.visitor_id)).size,
   };
 }
 

@@ -5,7 +5,7 @@
  */
 
 import { config } from "./config.js";
-import { overview } from "./db.js";
+import { overview, analytics } from "./db.js";
 import { runRenewalSweep } from "./renewals.js";
 
 const api = (method) => `https://api.telegram.org/bot${config.botToken}/${method}`;
@@ -44,11 +44,12 @@ export async function handleUpdate(update) {
   }
 
   if (cmd === "/stats") {
-    const o = await overview();
+    const [o, a] = await Promise.all([overview(), analytics()]);
     return send(
       chatId,
       [
         "📊 <b>System snapshot</b>",
+        `Visits: <b>${(a.visits ?? 0).toLocaleString()}</b> (${(a.uniqueVisitors ?? 0).toLocaleString()} unique)`,
         `Revenue: <b>${money(o.revenueCents)}</b> (${o.txnCount} paid)`,
         `• Tags: ${money(o.tagRevenueCents)} (${o.tagCount})`,
         `• Insurance: ${money(o.insRevenueCents)} (${o.insCount})`,

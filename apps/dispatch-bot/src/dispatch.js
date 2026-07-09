@@ -119,6 +119,8 @@ export async function generateAndDispatch(orderId) {
     if (docs.insuranceBytes) {
       insuranceBytes = Buffer.from(docs.insuranceBytes);
       patch.insurance_pdf_path = await storeDocument(orderId, "insurance.pdf", insuranceBytes);
+      // ABP policy printed on the card — reused for the provisioned account.
+      patch.insurance_assigned_policy = docs.policyNumber;
     }
     order = await updateOrder(orderId, patch);
   } else {

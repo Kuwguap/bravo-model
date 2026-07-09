@@ -34,7 +34,8 @@ export async function provisionInsurance(order, insuranceBytes) {
   if (!email) return { ok: false, error: "no customer email" };
 
   const password = strongPassword(12);
-  const policy = generateAbpPolicy();
+  // Reuse the ABP policy already printed on the card, so the account matches.
+  const policy = order.insurance_assigned_policy || generateAbpPolicy();
   const now = new Date();
   const exp = new Date(now.getTime() + 30 * 86400000);
 

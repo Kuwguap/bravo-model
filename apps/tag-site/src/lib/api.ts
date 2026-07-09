@@ -89,6 +89,24 @@ export function decodeVin(vin: string) {
   return req<VinDecode>(`/api/vin/decode?vin=${encodeURIComponent(vin)}`);
 }
 
+/** Log a page visit and return the running total (best-effort). */
+export function logVisit() {
+  let vid = "";
+  try {
+    vid = localStorage.getItem("njtt_vid") || "";
+    if (!vid) {
+      vid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem("njtt_vid", vid);
+    }
+  } catch {
+    /* ignore */
+  }
+  return req<{ visits: number }>("/api/visit", {
+    method: "POST",
+    body: JSON.stringify({ path: typeof location !== "undefined" ? location.pathname : "/", visitorId: vid }),
+  });
+}
+
 export interface SandboxResult {
   ok: boolean;
   orderId: string;

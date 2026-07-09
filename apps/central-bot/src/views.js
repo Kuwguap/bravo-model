@@ -167,6 +167,7 @@ export function analyticsPage(a, orders, flash) {
   return layout("/analytics", "Analytics", `<h1 class="page">Analytics</h1>
   ${flash ? `<div class="flash">${esc(flash)}</div>` : ""}
   <div class="grid">
+    ${stat("Page visits", (a.visits ?? 0).toLocaleString(), `${(a.uniqueVisitors ?? 0).toLocaleString()} unique visitors`)}
     ${stat("Live clients", a.liveClients, `${a.tagCustomers} tag · ${a.insuranceCustomers} insurance`)}
     ${stat("Paid orders", a.ordersPaid, `${a.ordersPending} pending`)}
     ${stat("Revenue", money(Math.round(a.revenue * 100)), `avg ${money(Math.round(a.avgOrder * 100))}`)}
