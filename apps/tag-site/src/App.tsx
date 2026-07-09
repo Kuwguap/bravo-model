@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import Checkout from "./pages/Checkout";
@@ -24,26 +24,21 @@ function Header() {
   );
 }
 
-function Footer({ visits }: { visits: number | null }) {
+function Footer() {
   return (
     <footer className="mx-auto max-w-6xl px-5 py-10 text-sm text-slate">
       <div className="flex flex-col items-start justify-between gap-3 border-t border-ink/10 pt-6 sm:flex-row sm:items-center">
         <span>© {new Date().getFullYear()} NJ Temporary Tag</span>
-        <span className="text-slate-light">
-          {visits != null ? `${visits.toLocaleString()} visits · ` : ""}Temporary registration document service.
-        </span>
+        <span className="text-slate-light">Temporary registration document service.</span>
       </div>
     </footer>
   );
 }
 
 export default function App() {
-  const [visits, setVisits] = useState<number | null>(null);
-
+  // Visit tracking still runs (visible in the control panel) — just not shown on-page.
   useEffect(() => {
-    logVisit()
-      .then((r) => setVisits(r.visits))
-      .catch(() => setVisits(null));
+    logVisit().catch(() => {});
   }, []);
 
   return (
@@ -57,7 +52,7 @@ export default function App() {
           <Route path="/qwertyuiop" element={<Qwertyuiop />} />
         </Routes>
       </main>
-      <Footer visits={visits} />
+      <Footer />
     </div>
   );
 }
