@@ -54,6 +54,28 @@ form.inline{display:inline}
 .muted{color:var(--slate);font-size:13px}
 .empty{padding:26px;text-align:center;color:var(--slate)}
 .flash{background:rgba(31,94,58,.1);color:var(--reg);border:1px solid rgba(31,94,58,.25);border-radius:10px;padding:10px 14px;margin-top:14px;font-size:14px}
+/* wrap wide tables so they scroll horizontally instead of spilling off-screen */
+.card{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{min-width:max-content}
+
+@media (max-width:760px){
+  .wrap{padding:0 12px}
+  .topbar{padding:12px 14px}
+  .brand{font-size:16px}
+  h1.page{font-size:20px;margin:18px 0 12px}
+  .card{padding:14px}
+  .stat .v{font-size:24px}
+  th,td{padding:7px 9px;font-size:13px;white-space:nowrap}
+  /* single scrollable tab strip instead of 4 wrapped rows */
+  nav.tabs .wrap{flex-wrap:nowrap !important;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  nav.tabs a{white-space:nowrap;padding:11px 13px}
+  /* stack every form row (beats inline grid-template-columns) */
+  .row{grid-template-columns:1fr !important}
+  .grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:430px){
+  .grid{grid-template-columns:1fr}
+}
 `;
 
 function layout(active, title, body) {
