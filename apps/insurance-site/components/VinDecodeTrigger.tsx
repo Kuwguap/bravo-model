@@ -50,7 +50,7 @@ export default function VinDecodeTrigger ({
         type="button"
         onClick={() => void run()}
         disabled={disabled || loading || !vin.trim()}
-        className="shrink-0 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-900 hover:bg-teal-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="shrink-0 rounded-lg border border-[#B7D9C4] bg-[#EEF6F0] px-3 py-2 text-sm font-semibold text-[#123D26] hover:bg-[#DCEDE3] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? 'Decoding…' : 'Decode VIN'}
       </button>

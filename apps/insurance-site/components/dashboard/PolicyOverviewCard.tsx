@@ -39,8 +39,8 @@ function StatusBadge ({ status }: { status: DashboardPolicy['status'] }) {
   const styles: Record<DashboardPolicy['status'], { label: string; cls: string; dot: string }> = {
     active: {
       label: 'Active',
-      cls: 'bg-emerald-50 text-emerald-800 ring-emerald-200',
-      dot: 'bg-emerald-500',
+      cls: 'bg-[#EEF6F0] text-[#164A2E] ring-[#B7D9C4]',
+      dot: 'bg-[#2E7D4F]',
     },
     pending: {
       label: 'Pending',
@@ -54,8 +54,8 @@ function StatusBadge ({ status }: { status: DashboardPolicy['status'] }) {
     },
     cancelled: {
       label: 'Cancelled',
-      cls: 'bg-slate-100 text-slate-700 ring-slate-200',
-      dot: 'bg-slate-400',
+      cls: 'bg-[#ECE8DD] text-[#232B36] ring-[#E4E7EC]',
+      dot: 'bg-[#8A94A3]',
     },
   }
   const s = styles[status]
@@ -101,11 +101,11 @@ export default function PolicyOverviewCard ({
     <section className="surface-card p-4 sm:p-6 md:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold text-[#12161C]">
             {heading ?? 'Your policy'}
           </h2>
           {isPrimary && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-teal-800 ring-1 ring-inset ring-teal-200">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#EEF6F0] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#164A2E] ring-1 ring-inset ring-[#B7D9C4]">
               <span aria-hidden>★</span> Primary vehicle
             </span>
           )}
@@ -114,15 +114,15 @@ export default function PolicyOverviewCard ({
       </div>
 
       {showVehicleBlock && vehicle && (
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+        <div className="mt-4 rounded-2xl border border-[#E4E7EC] bg-[#F5F3EC]/60 px-4 py-3">
+          <p className="text-xs font-medium uppercase tracking-wider text-[#6B7480]">
             Insured vehicle
           </p>
-          <p className="mt-1 text-base font-semibold text-slate-900">
+          <p className="mt-1 text-base font-semibold text-[#12161C]">
             {vehicleLabel || 'Vehicle on file'}
           </p>
           {vehicle.vin && vehicle.vin !== '—' && (
-            <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wide text-slate-500">
+            <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wide text-[#6B7480]">
               VIN {vehicle.vin}
             </p>
           )}
@@ -131,42 +131,42 @@ export default function PolicyOverviewCard ({
 
       <dl className="mt-6 grid grid-cols-1 gap-y-5 sm:grid-cols-2">
         <div>
-          <dt className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <dt className="text-xs font-medium uppercase tracking-wider text-[#6B7480]">
             Policy number
           </dt>
-          <dd className="mt-1 break-all font-mono text-base font-bold text-slate-900">
+          <dd className="mt-1 break-all font-mono text-base font-bold text-[#12161C]">
             {policy.policyNumber}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <dt className="text-xs font-medium uppercase tracking-wider text-[#6B7480]">
             Policy term
           </dt>
-          <dd className="mt-1 text-base font-semibold text-slate-900">
+          <dd className="mt-1 text-base font-semibold text-[#12161C]">
             {planTermLabel(policy.planKey)}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <dt className="text-xs font-medium uppercase tracking-wider text-[#6B7480]">
             Renewal date
           </dt>
-          <dd className="mt-1 text-base font-semibold text-slate-900">
+          <dd className="mt-1 text-base font-semibold text-[#12161C]">
             {dateLabel(policy.renewalDateIso)}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <dt className="text-xs font-medium uppercase tracking-wider text-[#6B7480]">
             Policy premium
           </dt>
-          <dd className="mt-1 text-base font-semibold text-slate-900">
+          <dd className="mt-1 text-base font-semibold text-[#12161C]">
             {dollarLabel(termPremiumCentsFromMonthly(policy.planKey, policy.monthlyPremiumCents))}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <dt className="text-xs font-medium uppercase tracking-wider text-[#6B7480]">
             Current period ends
           </dt>
-          <dd className="mt-1 text-base font-semibold text-slate-900">
+          <dd className="mt-1 text-base font-semibold text-[#12161C]">
             {dateLabel(policy.currentPeriodEndIso)}
           </dd>
         </div>

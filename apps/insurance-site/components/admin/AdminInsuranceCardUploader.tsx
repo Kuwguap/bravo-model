@@ -64,7 +64,7 @@ export default function AdminInsuranceCardUploader ({ refreshSignal }: Props) {
   const selected = users.find(u => u.id === selectedUserId)
 
   return (
-    <div className="mb-10 rounded-xl border border-teal-200 bg-white p-6 shadow-sm">
+    <div className="mb-10 rounded-xl border border-[#B7D9C4] bg-white p-6 shadow-sm">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Insurance card (PDF or photo)</h2>
@@ -101,7 +101,7 @@ export default function AdminInsuranceCardUploader ({ refreshSignal }: Props) {
           <label className="block min-w-[220px] flex-1">
             <span className="mb-1 block text-sm font-medium text-gray-700">Customer</span>
             <select
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:border-[#2E7D4F] focus:ring-2 focus:ring-[#2E7D4F]"
               value={selectedUserId}
               onChange={e => {
                 setSelectedUserId(e.target.value)
@@ -122,7 +122,7 @@ export default function AdminInsuranceCardUploader ({ refreshSignal }: Props) {
             <input
               type="file"
               accept="application/pdf,.pdf,image/jpeg,.jpg,.jpeg,image/png,.png,image/webp,.webp,image/gif,.gif"
-              className="w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-blue-900 hover:file:bg-blue-100"
+              className="w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[#EEF6F0] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#123D26] hover:file:bg-[#DCEDE3]"
               onChange={e => {
                 setFile(e.target.files?.[0] ?? null)
                 setErr('')
@@ -134,7 +134,7 @@ export default function AdminInsuranceCardUploader ({ refreshSignal }: Props) {
             type="button"
             onClick={() => void upload()}
             disabled={uploading || !selectedUserId}
-            className="rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-[#1F5E3A] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#2E7D4F] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {uploading ? 'Uploading…' : 'Upload'}
           </button>
@@ -142,7 +142,7 @@ export default function AdminInsuranceCardUploader ({ refreshSignal }: Props) {
       )}
 
       {selected && selected.insurance_card_pdf_path && (
-        <p className="mt-3 text-sm text-emerald-800">
+        <p className="mt-3 text-sm text-[#164A2E]">
           This customer already has a card on file; uploading again will replace it.
         </p>
       )}
@@ -151,7 +151,7 @@ export default function AdminInsuranceCardUploader ({ refreshSignal }: Props) {
         <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">{err}</div>
       )}
       {msg && (
-        <div className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-900">
+        <div className="mt-4 rounded-lg border border-[#B7D9C4] bg-[#EEF6F0] px-4 py-2 text-sm text-[#123D26]">
           {msg}
         </div>
       )}

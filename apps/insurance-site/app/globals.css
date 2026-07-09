@@ -192,3 +192,10 @@
     padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
   }
 }
+
+/* NJ Coverage type + surface: match the landing across the whole site. */
+body { background-color: #F5F3EC; }
+h1, h2, h3 {
+  font-family: var(--font-oswald), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}

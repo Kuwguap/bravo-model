@@ -55,12 +55,12 @@ export default function TestPurchasePage () {
   })()
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#F5F3EC]">
       <nav className="sticky top-0 z-50 border-b border-amber-200/80 bg-amber-50/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
           <BrandMark href="/" />
           <div className="flex gap-3">
-            <Link href="/purchase" className="text-sm font-semibold text-slate-700">
+            <Link href="/purchase" className="text-sm font-semibold text-[#232B36]">
               Live checkout
             </Link>
           </div>
@@ -73,10 +73,10 @@ export default function TestPurchasePage () {
             <p className="text-sm font-semibold uppercase tracking-widest text-amber-800">
               Internal test — dummy payment
             </p>
-            <h1 className="mt-2 text-3xl font-bold text-slate-900 md:text-4xl">
+            <h1 className="mt-2 text-3xl font-bold text-[#12161C] md:text-4xl">
               Purchase auto insurance (test)
             </h1>
-            <p className="mt-3 text-slate-600">
+            <p className="mt-3 text-[#5A6472]">
               <strong>No card charge.</strong> Same steps as production: pick a plan → driver &amp; vehicle
               form → <strong>GET INSURED</strong> sends a <strong>real</strong> email with a{' '}
               <strong>real</strong> NY FS-20 insurance ID PDF (AAMVA PDF417, Resend + NHTSA VIN decode).
@@ -95,10 +95,10 @@ export default function TestPurchasePage () {
                   className="flex flex-col rounded-2xl border border-amber-200 bg-white p-6 shadow-sm"
                 >
                   <div className="flex items-baseline justify-between gap-2">
-                    <h2 className="text-lg font-bold text-slate-900">{plan.label}</h2>
-                    <span className="text-xl font-bold text-teal-800">{plan.priceLabel}</span>
+                    <h2 className="text-lg font-bold text-[#12161C]">{plan.label}</h2>
+                    <span className="text-xl font-bold text-[#164A2E]">{plan.priceLabel}</span>
                   </div>
-                  <p className="mt-1 text-sm text-slate-500">{plan.description}</p>
+                  <p className="mt-1 text-sm text-[#6B7480]">{plan.description}</p>
                   <button
                     type="button"
                     disabled={busy !== null}
@@ -114,7 +114,7 @@ export default function TestPurchasePage () {
               ))}
             </div>
 
-            <p className="mt-10 text-center text-xs text-slate-500">
+            <p className="mt-10 text-center text-xs text-[#6B7480]">
               Do not link this URL from the public site. Tokens expire in about an hour.
             </p>
           </>

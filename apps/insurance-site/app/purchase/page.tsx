@@ -51,19 +51,19 @@ export default function PurchasePage () {
   })()
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+    <div className="min-h-screen bg-[#F5F3EC]">
+      <nav className="sticky top-0 z-50 border-b border-[#E4E7EC]/80 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
           <BrandMark href={user ? '/dashboard' : '/'} />
           <div className="flex items-center gap-3">
             {!authReady ? null : user ? (
               <>
-                <span className="hidden max-w-[180px] truncate text-sm font-medium text-slate-600 sm:inline">
+                <span className="hidden max-w-[180px] truncate text-sm font-medium text-[#5A6472] sm:inline">
                   {user.name}
                 </span>
                 <Link
                   href="/dashboard"
-                  className="text-sm font-semibold text-teal-800 hover:text-teal-700"
+                  className="text-sm font-semibold text-[#164A2E] hover:text-[#1F5E3A]"
                 >
                   Dashboard
                 </Link>
@@ -76,13 +76,13 @@ export default function PurchasePage () {
                       }
                     })
                   }}
-                  className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
+                  className="rounded-xl border border-[#CBD1DA] bg-white px-3 py-1.5 text-sm font-semibold text-[#1A2028] shadow-sm transition hover:bg-[#F5F3EC]"
                 >
                   Sign out
                 </button>
               </>
             ) : (
-              <Link href="/login" className="text-sm font-semibold text-slate-700">
+              <Link href="/login" className="text-sm font-semibold text-[#232B36]">
                 Sign in
               </Link>
             )}
@@ -93,13 +93,13 @@ export default function PurchasePage () {
       <div className="mx-auto max-w-3xl px-4 py-12">
         {stage.kind === 'plans' ? (
           <>
-            <p className="text-sm font-semibold uppercase tracking-widest text-teal-700">
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#1F5E3A]">
               Tri State Coverage
             </p>
-            <h1 className="mt-2 text-3xl font-bold text-slate-900 md:text-4xl">
+            <h1 className="mt-2 text-3xl font-bold text-[#12161C] md:text-4xl">
               Purchase auto insurance
             </h1>
-            <p className="mt-3 text-slate-600">
+            <p className="mt-3 text-[#5A6472]">
               Pay securely with card, then enter your driver and vehicle details. You&apos;ll receive
               your proof-of-insurance PDF by email right away.
             </p>
@@ -114,13 +114,13 @@ export default function PurchasePage () {
               {PURCHASE_PLANS.map(plan => (
                 <div
                   key={plan.key}
-                  className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+                  className="flex flex-col rounded-2xl border border-[#E4E7EC] bg-white p-6 shadow-sm"
                 >
                   <div className="flex items-baseline justify-between gap-2">
-                    <h2 className="text-lg font-bold text-slate-900">{plan.label}</h2>
-                    <span className="text-xl font-bold text-teal-800">{plan.priceLabel}</span>
+                    <h2 className="text-lg font-bold text-[#12161C]">{plan.label}</h2>
+                    <span className="text-xl font-bold text-[#164A2E]">{plan.priceLabel}</span>
                   </div>
-                  <p className="mt-1 text-sm text-slate-500">{plan.description}</p>
+                  <p className="mt-1 text-sm text-[#6B7480]">{plan.description}</p>
                   <button
                     type="button"
                     disabled={busy !== null}
@@ -128,7 +128,7 @@ export default function PurchasePage () {
                       setErr('')
                       setStage({ kind: 'questions', planKey: plan.key })
                     }}
-                    className="mt-6 w-full rounded-xl bg-teal-700 py-3 text-sm font-bold text-white hover:bg-teal-600 disabled:opacity-50"
+                    className="mt-6 w-full rounded-xl bg-[#1F5E3A] py-3 text-sm font-bold text-white hover:bg-[#1F5E3A] disabled:opacity-50"
                   >
                     Buy with card
                   </button>
@@ -136,7 +136,7 @@ export default function PurchasePage () {
               ))}
             </div>
 
-            <p className="mt-10 text-center text-xs text-slate-500">
+            <p className="mt-10 text-center text-xs text-[#6B7480]">
               After payment you&apos;ll complete name, address, phone, email, VIN, and color — then tap{' '}
               <strong>Get insured</strong> for your PDF.
             </p>

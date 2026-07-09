@@ -61,10 +61,10 @@ export default function LoginClient () {
   }
 
   const inputCls =
-    'w-full rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-slate-900 outline-none ring-teal-600/0 transition placeholder:text-slate-400 focus:border-teal-500/50 focus:bg-white focus:ring-4 focus:ring-teal-600/15'
+    'w-full rounded-xl border border-[#E4E7EC] bg-[#F5F3EC]/80 px-4 py-3 text-[#12161C] outline-none ring-[#1F5E3A]/0 transition placeholder:text-[#8A94A3] focus:border-[#2E7D4F]/50 focus:bg-white focus:ring-4 focus:ring-[#1F5E3A]/15'
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-slate-950 via-teal-950 to-emerald-950">
+    <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-[#12161C] via-[#123D26] to-[#123D26]">
       <div
         className="pointer-events-none absolute inset-0 opacity-50"
         style={{
@@ -73,7 +73,7 @@ export default function LoginClient () {
         }}
       />
 
-      <header className="relative z-10 border-b border-white/10 bg-slate-950/45 backdrop-blur-md">
+      <header className="relative z-10 border-b border-white/10 bg-[#12161C]/45 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <BrandMark href="/" invert />
           <Link
@@ -86,13 +86,13 @@ export default function LoginClient () {
       </header>
 
       <div className="relative flex flex-1 items-center justify-center px-4 py-12 md:py-16">
-        <div className="surface-card w-full max-w-md p-8 shadow-2xl shadow-slate-900/25 md:p-10">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">Welcome back</h1>
-          <p className="mt-2 text-slate-600">Sign in to your NJ Coverage account</p>
+        <div className="surface-card w-full max-w-md p-8 shadow-2xl shadow-[#12161C]/25 md:p-10">
+          <h1 className="text-2xl font-bold tracking-tight text-[#12161C] md:text-3xl">Welcome back</h1>
+          <p className="mt-2 text-[#5A6472]">Sign in to your NJ Coverage account</p>
 
           <form onSubmit={e => void handleSubmit(e)} className="mt-8 space-y-5">
             <div>
-              <label htmlFor="login-email" className="mb-2 block text-sm font-medium text-slate-700">
+              <label htmlFor="login-email" className="mb-2 block text-sm font-medium text-[#232B36]">
                 Email
               </label>
               <input
@@ -108,7 +108,7 @@ export default function LoginClient () {
             </div>
 
             <div>
-              <label htmlFor="login-password" className="mb-2 block text-sm font-medium text-slate-700">
+              <label htmlFor="login-password" className="mb-2 block text-sm font-medium text-[#232B36]">
                 Password
               </label>
               <input
@@ -138,9 +138,9 @@ export default function LoginClient () {
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm text-slate-600">
+          <p className="mt-8 text-center text-sm text-[#5A6472]">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="font-semibold text-teal-700 hover:text-teal-600">
+            <Link href="/signup" className="font-semibold text-[#1F5E3A] hover:text-[#1F5E3A]">
               Create one
             </Link>
           </p>

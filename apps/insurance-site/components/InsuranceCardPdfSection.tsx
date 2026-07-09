@@ -72,10 +72,10 @@ export default function InsuranceCardPdfSection ({ policyholderName, storagePath
     <section className="surface-card mt-8 p-6 md:p-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Insurance card</h2>
-          <p className="mt-2 text-sm text-slate-600">
+          <h2 className="text-xl font-bold text-[#12161C]">Insurance card</h2>
+          <p className="mt-2 text-sm text-[#5A6472]">
             View or download your official card as{' '}
-            <span className="font-medium text-slate-800">
+            <span className="font-medium text-[#1A2028]">
               {insuranceCardDownloadFilename(policyholderName, storagePath)}
             </span>
             .
@@ -86,7 +86,7 @@ export default function InsuranceCardPdfSection ({ policyholderName, storagePath
             type="button"
             onClick={() => void handleView()}
             disabled={busy !== null}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 disabled:opacity-60"
+            className="rounded-xl border border-[#E4E7EC] bg-white px-4 py-2.5 text-sm font-semibold text-[#1A2028] shadow-sm transition hover:bg-[#F5F3EC] disabled:opacity-60"
           >
             {busy === 'view' ? 'Opening…' : 'View'}
           </button>

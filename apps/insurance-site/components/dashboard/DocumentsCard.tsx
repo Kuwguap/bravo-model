@@ -12,9 +12,9 @@ const INSURANCE_CARD_API = '/api/insurance-card-pdf'
 const POLICY_DECL_API = '/api/documents/policy-declaration'
 
 const DOC_BTN =
-  'btn-touch w-full sm:w-auto rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50'
+  'btn-touch w-full sm:w-auto rounded-xl border border-[#E4E7EC] bg-white px-4 text-sm font-semibold text-[#1A2028] shadow-sm transition hover:bg-[#F5F3EC] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50'
 const DOC_BTN_PRIMARY =
-  'btn-touch w-full sm:w-auto rounded-xl bg-teal-600 px-4 text-sm font-semibold text-white shadow-md shadow-teal-900/15 transition hover:bg-teal-500 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50'
+  'btn-touch w-full sm:w-auto rounded-xl bg-[#1F5E3A] px-4 text-sm font-semibold text-white shadow-md shadow-[#123D26]/15 transition hover:bg-[#2E7D4F] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50'
 
 export type DocumentsCardVehicle = {
   vehicleId: string | null
@@ -86,22 +86,22 @@ export default function DocumentsCard ({
 
   return (
     <section className="surface-card p-4 sm:p-6 md:p-8">
-      <h2 className="text-lg font-semibold text-slate-900">Documents</h2>
-      <p className="mt-1 text-sm text-slate-500">
+      <h2 className="text-lg font-semibold text-[#12161C]">Documents</h2>
+      <p className="mt-1 text-sm text-[#6B7480]">
         View or download your insurance documents. On mobile, tap View for a
         full-screen reader you can pinch-zoom.
       </p>
 
       <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
         {hasPerVehicleCards ? (
-          <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 lg:col-span-1">
+          <div className="rounded-2xl border border-[#E4E7EC] bg-[#F5F3EC]/60 p-4 lg:col-span-1">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-700">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#DCEDE3] text-[#1F5E3A]">
                 <span aria-hidden>📄</span>
               </div>
               <div className="min-w-0">
-                <p className="font-semibold text-slate-900">Insurance cards</p>
-                <p className="text-xs text-slate-500">
+                <p className="font-semibold text-[#12161C]">Insurance cards</p>
+                <p className="text-xs text-[#6B7480]">
                   {perVehicleCards.length} of {allVehicles.length} vehicles have
                   a card on file
                 </p>
@@ -120,13 +120,13 @@ export default function DocumentsCard ({
                 return (
                   <li
                     key={vehicleId}
-                    className="rounded-xl border border-slate-200 bg-white p-4"
+                    className="rounded-xl border border-[#E4E7EC] bg-white p-4"
                   >
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-slate-900 break-words">
+                      <p className="text-sm font-semibold text-[#12161C] break-words">
                         {label}
                       </p>
-                      <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wide text-slate-500 break-all">
+                      <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wide text-[#6B7480] break-all">
                         {v.policyNumber || '—'}
                       </p>
                     </div>
@@ -168,14 +168,14 @@ export default function DocumentsCard ({
             </ul>
           </div>
         ) : (
-          <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+          <div className="rounded-2xl border border-[#E4E7EC] bg-[#F5F3EC]/60 p-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-700">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#DCEDE3] text-[#1F5E3A]">
                 <span aria-hidden>📄</span>
               </div>
               <div>
-                <p className="font-semibold text-slate-900">Insurance card</p>
-                <p className="text-xs text-slate-500">NY FS-20 PDF</p>
+                <p className="font-semibold text-[#12161C]">Insurance card</p>
+                <p className="text-xs text-[#6B7480]">NY FS-20 PDF</p>
               </div>
             </div>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -203,21 +203,21 @@ export default function DocumentsCard ({
               </button>
             </div>
             {!insuranceCardAvailable && (
-              <p className="mt-3 text-xs text-slate-500">
+              <p className="mt-3 text-xs text-[#6B7480]">
                 Issued once your agent uploads it after purchase.
               </p>
             )}
           </div>
         )}
 
-        <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+        <div className="rounded-2xl border border-[#E4E7EC] bg-[#F5F3EC]/60 p-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#DCEDE3] text-[#1F5E3A]">
               <span aria-hidden>📄</span>
             </div>
             <div>
-              <p className="font-semibold text-slate-900">Policy declaration</p>
-              <p className="text-xs text-slate-500">Generated on demand</p>
+              <p className="font-semibold text-[#12161C]">Policy declaration</p>
+              <p className="text-xs text-[#6B7480]">Generated on demand</p>
             </div>
           </div>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -247,7 +247,7 @@ export default function DocumentsCard ({
             </button>
           </div>
           {!hasActivePolicy && (
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-3 text-xs text-[#6B7480]">
               Available once a policy is active.
             </p>
           )}

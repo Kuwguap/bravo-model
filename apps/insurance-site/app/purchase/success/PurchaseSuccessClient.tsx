@@ -416,11 +416,11 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+    <div className="min-h-screen bg-[#F5F3EC]">
+      <nav className="sticky top-0 z-50 border-b border-[#E4E7EC]/80 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
           <BrandMark href="/" />
-          <Link href={backHref} className="text-sm font-semibold text-teal-800">
+          <Link href={backHref} className="text-sm font-semibold text-[#164A2E]">
             ← Plans
           </Link>
         </div>
@@ -428,7 +428,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
 
       <div className="mx-auto max-w-lg px-4 py-10">
         {loadingSession && (
-          <p className="text-center text-slate-600">Verifying payment…</p>
+          <p className="text-center text-[#5A6472]">Verifying payment…</p>
         )}
         {sessionErr && (
           <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-red-900">
@@ -436,7 +436,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
             <p className="mt-2 text-sm">{sessionErr}</p>
             <Link
               href={backHref}
-              className="mt-4 inline-block text-sm font-semibold text-teal-800 underline"
+              className="mt-4 inline-block text-sm font-semibold text-[#164A2E] underline"
             >
               Back to purchase
             </Link>
@@ -444,7 +444,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
         )}
 
         {done && (
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-950">
+          <div className="rounded-xl border border-[#B7D9C4] bg-[#EEF6F0] p-6 text-[#123D26]">
             <h1 className="text-xl font-bold">You&apos;re insured</h1>
             <p className="mt-3 text-sm leading-relaxed">
               Policy <strong>{done.policyNumber}</strong> — your NY FS-20 insurance ID card PDF was sent
@@ -452,7 +452,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
             </p>
             <Link
               href="/"
-              className="mt-6 inline-flex rounded-xl bg-teal-700 px-5 py-2.5 text-sm font-semibold text-white"
+              className="mt-6 inline-flex rounded-xl bg-[#1F5E3A] px-5 py-2.5 text-sm font-semibold text-white"
             >
               Back to home
             </Link>
@@ -461,22 +461,22 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
 
         {!loadingSession && !sessionErr && sessionInfo && !done && (
           <>
-            <h1 className="text-2xl font-bold text-slate-900">Driver &amp; vehicle</h1>
-            <p className="mt-2 text-sm text-slate-600">
+            <h1 className="text-2xl font-bold text-[#12161C]">Driver &amp; vehicle</h1>
+            <p className="mt-2 text-sm text-[#5A6472]">
               Payment received. Complete the details below — we&apos;ll email your proof of
               insurance PDF immediately.
             </p>
-            <p className="mt-3 rounded-lg border border-teal-100 bg-teal-50/80 px-3 py-2 text-xs font-medium text-teal-900">
+            <p className="mt-3 rounded-lg border border-[#DCEDE3] bg-[#EEF6F0]/80 px-3 py-2 text-xs font-medium text-[#123D26]">
               Policy period: {sessionInfo.planLabel}
             </p>
 
             {/* ── AI auto-fill (text paste + photo) ──────────────────────────── */}
-            <section className="mt-6 rounded-xl border border-violet-200 bg-violet-50/60 p-4">
-              <div className="flex items-center gap-2 text-sm font-semibold text-violet-900">
+            <section className="mt-6 rounded-xl border border-[#B7D9C4] bg-[#EEF6F0]/60 p-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-[#123D26]">
                 <SparklesIcon className="size-4" />
                 Auto-fill with AI
               </div>
-              <p className="mt-1 text-[11px] leading-relaxed text-violet-900/80">
+              <p className="mt-1 text-[11px] leading-relaxed text-[#123D26]/80">
                 Paste text from your driver&apos;s license, insurance card, or vehicle registration —
                 or upload a clear photo of it — and we&apos;ll fill the form. Filled fields are
                 never overwritten, so you can mix and match.
@@ -489,7 +489,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                 placeholder={
                   'Joseph C Mcrae JR\n18 Woodshore E\nKeyport, NJ 07735\n201-555-0199\nVIN WBAJA7C59JG909541\nGray\nDL 437366609'
                 }
-                className="mt-3 w-full rounded-md border border-violet-300 bg-white px-3 py-2 font-mono text-[11px] leading-relaxed text-slate-800 shadow-inner focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-100"
+                className="mt-3 w-full rounded-md border border-[#5AA377] bg-white px-3 py-2 font-mono text-[11px] leading-relaxed text-[#1A2028] shadow-inner focus:border-[#2E7D4F] focus:outline-none focus:ring-2 focus:ring-[#DCEDE3]"
               />
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -497,7 +497,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                   type="button"
                   onClick={() => void parseFromText()}
                   disabled={parsing !== 'idle' || !pasteText.trim()}
-                  className="inline-flex items-center gap-2 rounded-md border border-violet-300 bg-white px-3 py-2 text-sm font-medium text-violet-900 hover:bg-violet-50 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-md border border-[#5AA377] bg-white px-3 py-2 text-sm font-medium text-[#123D26] hover:bg-[#EEF6F0] disabled:opacity-50"
                 >
                   {parsing === 'text' ? (
                     <Loader2Icon className="size-4 animate-spin" />
@@ -509,10 +509,10 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
 
                 <label
                   className={[
-                    'inline-flex items-center gap-2 rounded-md border border-violet-300 bg-white px-3 py-2 text-sm font-medium text-violet-900 transition',
+                    'inline-flex items-center gap-2 rounded-md border border-[#5AA377] bg-white px-3 py-2 text-sm font-medium text-[#123D26] transition',
                     parsing !== 'idle' || addingPhotos || photos.length >= MAX_CLIENT_PHOTOS
                       ? 'cursor-not-allowed opacity-50'
-                      : 'cursor-pointer hover:bg-violet-50',
+                      : 'cursor-pointer hover:bg-[#EEF6F0]',
                   ].join(' ')}
                   title={
                     photos.length >= MAX_CLIENT_PHOTOS
@@ -555,7 +555,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                       setParseInfoMsg('')
                       setParseErr('')
                     }}
-                    className="ml-auto inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-violet-900/70 hover:bg-violet-100 hover:text-violet-900"
+                    className="ml-auto inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-[#123D26]/70 hover:bg-[#DCEDE3] hover:text-[#123D26]"
                     title="Clear pasted text"
                   >
                     <XIcon className="size-3.5" />
@@ -570,7 +570,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                     {photos.map(p => (
                       <div
                         key={p.id}
-                        className="group relative aspect-square overflow-hidden rounded-md border border-violet-200 bg-white shadow-sm"
+                        className="group relative aspect-square overflow-hidden rounded-md border border-[#B7D9C4] bg-white shadow-sm"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -583,7 +583,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                           onClick={() => removePhoto(p.id)}
                           disabled={parsing !== 'idle'}
                           aria-label={`Remove ${p.fileName}`}
-                          className="absolute right-1 top-1 inline-flex size-6 items-center justify-center rounded-full bg-slate-900/70 text-white opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="absolute right-1 top-1 inline-flex size-6 items-center justify-center rounded-full bg-[#12161C]/70 text-white opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 hover:bg-[#12161C] disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           <XIcon className="size-3.5" />
                         </button>
@@ -595,7 +595,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                       type="button"
                       onClick={() => void parseFromPhotos()}
                       disabled={parsing !== 'idle' || addingPhotos}
-                      className="inline-flex items-center gap-2 rounded-md bg-violet-700 px-3 py-2 text-sm font-semibold text-white hover:bg-violet-600 disabled:opacity-50"
+                      className="inline-flex items-center gap-2 rounded-md bg-[#1F5E3A] px-3 py-2 text-sm font-semibold text-white hover:bg-[#1F5E3A] disabled:opacity-50"
                     >
                       {parsing === 'images' ? (
                         <Loader2Icon className="size-4 animate-spin" />
@@ -614,7 +614,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                         setParseInfoMsg('')
                       }}
                       disabled={parsing !== 'idle'}
-                      className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-violet-900/70 hover:bg-violet-100 hover:text-violet-900 disabled:opacity-50"
+                      className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-[#123D26]/70 hover:bg-[#DCEDE3] hover:text-[#123D26] disabled:opacity-50"
                     >
                       <XIcon className="size-3.5" />
                       Clear photos
@@ -624,7 +624,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
               ) : null}
 
               {parseInfoMsg && (
-                <p className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-900">
+                <p className="mt-3 rounded-md border border-[#B7D9C4] bg-[#EEF6F0] px-3 py-2 text-xs text-[#123D26]">
                   {parseInfoMsg}
                 </p>
               )}
@@ -637,39 +637,39 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
 
             <form onSubmit={e => void onSubmit(e)} className="mt-6 space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500">
+                <label className="block text-xs font-semibold uppercase text-[#6B7480]">
                   Full name
                 </label>
                 <input
                   required
                   value={fullName}
                   onChange={e => setFullName(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                  className="mt-1 w-full rounded-lg border border-[#CBD1DA] px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500">
+                <label className="block text-xs font-semibold uppercase text-[#6B7480]">
                   Street address
                 </label>
                 <input
                   required
                   value={addressLine1}
                   onChange={e => setAddressLine1(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                  className="mt-1 w-full rounded-lg border border-[#CBD1DA] px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500">
+                <label className="block text-xs font-semibold uppercase text-[#6B7480]">
                   Apt / suite (optional)
                 </label>
                 <input
                   value={addressLine2}
                   onChange={e => setAddressLine2(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                  className="mt-1 w-full rounded-lg border border-[#CBD1DA] px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500">
+                <label className="block text-xs font-semibold uppercase text-[#6B7480]">
                   City, ST ZIP
                 </label>
                 <input
@@ -677,11 +677,11 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                   value={cityStateZip}
                   onChange={e => setCityStateZip(e.target.value)}
                   placeholder="Jersey City, NJ 07304"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                  className="mt-1 w-full rounded-lg border border-[#CBD1DA] px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500">
+                <label className="block text-xs font-semibold uppercase text-[#6B7480]">
                   Phone
                 </label>
                 <input
@@ -689,11 +689,11 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                   type="tel"
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                  className="mt-1 w-full rounded-lg border border-[#CBD1DA] px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500">
+                <label className="block text-xs font-semibold uppercase text-[#6B7480]">
                   Email (PDF sent here)
                 </label>
                 <input
@@ -701,11 +701,11 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                  className="mt-1 w-full rounded-lg border border-[#CBD1DA] px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500">
+                <label className="block text-xs font-semibold uppercase text-[#6B7480]">
                   Driver license number
                 </label>
                 <input
@@ -720,15 +720,15 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                   maxLength={25}
                   inputMode="text"
                   autoComplete="off"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 font-mono text-sm uppercase"
+                  className="mt-1 w-full rounded-lg border border-[#CBD1DA] px-3 py-2 font-mono text-sm uppercase"
                 />
-                <p className="mt-1 text-[11px] text-slate-500">
+                <p className="mt-1 text-[11px] text-[#6B7480]">
                   Encoded as AAMVA <code className="font-mono">DAQ</code> in the
                   PDF417 on your NY FS-20 card. Not your policy number.
                 </p>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500">
+                <label className="block text-xs font-semibold uppercase text-[#6B7480]">
                   VIN (17 characters)
                 </label>
                 <input
@@ -747,14 +747,14 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                   autoComplete="off"
                   spellCheck={false}
                   placeholder="17-character VIN (auto-decodes)"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 font-mono text-sm uppercase"
+                  className="mt-1 w-full rounded-lg border border-[#CBD1DA] px-3 py-2 font-mono text-sm uppercase"
                 />
                 {vinHint && (
-                  <p className="mt-1 text-xs text-slate-600">{vinHint}</p>
+                  <p className="mt-1 text-xs text-[#5A6472]">{vinHint}</p>
                 )}
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500">
+                <label className="block text-xs font-semibold uppercase text-[#6B7480]">
                   Vehicle color
                 </label>
                 <input
@@ -762,7 +762,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
                   value={vehicleColor}
                   onChange={e => setVehicleColor(e.target.value)}
                   placeholder="e.g. Red"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                  className="mt-1 w-full rounded-lg border border-[#CBD1DA] px-3 py-2"
                 />
               </div>
 
@@ -775,7 +775,7 @@ export default function PurchaseSuccessClient ({ backHref = '/purchase' }: Props
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full rounded-xl bg-teal-700 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-sm hover:bg-teal-600 disabled:opacity-60"
+                className="w-full rounded-xl bg-[#1F5E3A] py-3 text-sm font-bold uppercase tracking-wide text-white shadow-sm hover:bg-[#1F5E3A] disabled:opacity-60"
               >
                 {submitting ? 'Sending…' : 'GET INSURED'}
               </button>

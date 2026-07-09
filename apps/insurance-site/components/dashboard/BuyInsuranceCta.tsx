@@ -20,13 +20,13 @@ export default function BuyInsuranceCta ({ hasActivePolicy }: Props) {
   const cta = hasActivePolicy ? 'Buy another policy' : 'Buy insurance now'
 
   return (
-    <section className="surface-card flex flex-col gap-4 bg-gradient-to-br from-emerald-50 to-teal-50 p-6 md:flex-row md:items-center md:justify-between md:p-8">
+    <section className="surface-card flex flex-col gap-4 bg-gradient-to-br from-[#EEF6F0] to-[#EEF6F0] p-6 md:flex-row md:items-center md:justify-between md:p-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#1F5E3A]">
           Coverage
         </p>
-        <h2 className="mt-1 text-xl font-bold text-slate-900">{title}</h2>
-        <p className="mt-1 max-w-xl text-sm text-slate-700">{subtitle}</p>
+        <h2 className="mt-1 text-xl font-bold text-[#12161C]">{title}</h2>
+        <p className="mt-1 max-w-xl text-sm text-[#232B36]">{subtitle}</p>
       </div>
       <Link
         href="/purchase"

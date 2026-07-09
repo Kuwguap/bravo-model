@@ -117,8 +117,8 @@ export default function BarcodeOverlay ({
       className={cn(
         'group select-none rounded-sm bg-white/40',
         selected
-          ? 'outline outline-2 outline-blue-500 shadow-[0_0_0_3px_rgba(59,130,246,0.25)]'
-          : 'outline outline-1 outline-blue-300/70 hover:outline-blue-500',
+          ? 'outline outline-2 outline-[#2E7D4F] shadow-[0_0_0_3px_rgba(59,130,246,0.25)]'
+          : 'outline outline-1 outline-[#5AA377]/70 hover:outline-[#2E7D4F]',
       )}
     >
       {imageUrl ? (
@@ -140,7 +140,7 @@ export default function BarcodeOverlay ({
       )}
 
       <span
-        className="pointer-events-none absolute -top-5 left-0 rounded bg-blue-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white shadow"
+        className="pointer-events-none absolute -top-5 left-0 rounded bg-[#1F5E3A] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white shadow"
       >
         {placement.style}
         <span className="ml-1 font-mono opacity-80">
@@ -175,7 +175,7 @@ export default function BarcodeOverlay ({
           }
           ;(e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId)
         }}
-        className="absolute right-0 bottom-0 flex size-3 translate-x-1/2 translate-y-1/2 cursor-nwse-resize items-center justify-center rounded-sm bg-blue-600 text-white"
+        className="absolute right-0 bottom-0 flex size-3 translate-x-1/2 translate-y-1/2 cursor-nwse-resize items-center justify-center rounded-sm bg-[#1F5E3A] text-white"
       >
         <GripIcon className="size-2" />
       </div>

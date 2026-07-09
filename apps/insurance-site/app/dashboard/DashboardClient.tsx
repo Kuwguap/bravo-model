@@ -133,12 +133,12 @@ export default function DashboardClient () {
 
   if (!authReady || !user) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-gradient-to-b from-slate-100 to-slate-50">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-gradient-to-b from-[#ECE8DD] to-[#F5F3EC]">
         <div
-          className="h-10 w-10 animate-spin rounded-full border-2 border-teal-600 border-t-transparent"
+          className="h-10 w-10 animate-spin rounded-full border-2 border-[#1F5E3A] border-t-transparent"
           aria-hidden
         />
-        <p className="text-sm font-medium text-slate-600">Loading your dashboard…</p>
+        <p className="text-sm font-medium text-[#5A6472]">Loading your dashboard…</p>
       </div>
     )
   }
@@ -211,19 +211,19 @@ export default function DashboardClient () {
   void policyById
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-100 via-slate-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#ECE8DD] via-[#F5F3EC] to-white">
       <Header user={user} onLogout={logout} />
 
       <main className="safe-page-x safe-page-b mx-auto max-w-6xl py-6 sm:py-8 md:py-12">
         <section className="flex flex-wrap items-end justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#1F5E3A]">
               Member dashboard
             </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#12161C] sm:text-3xl md:text-4xl">
               Welcome, {firstName}
             </h1>
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="mt-1 text-sm text-[#5A6472]">
               {hasMultiplePolicies
                 ? `You have ${pairs.length} active policies. Manage each one below.`
                 : 'Manage your coverage, payments, and documents in one place.'}

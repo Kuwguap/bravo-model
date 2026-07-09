@@ -84,8 +84,8 @@ export default function DocumentViewerClient () {
   }
 
   return (
-    <div className="document-viewer-shell flex min-h-[100dvh] flex-col bg-slate-950 text-white">
-      <header className="document-viewer-toolbar sticky top-0 z-10 flex shrink-0 items-center gap-2 border-b border-white/10 bg-slate-950/95 px-3 py-2 backdrop-blur-md sm:px-4 sm:py-3">
+    <div className="document-viewer-shell flex min-h-[100dvh] flex-col bg-[#12161C] text-white">
+      <header className="document-viewer-toolbar sticky top-0 z-10 flex shrink-0 items-center gap-2 border-b border-white/10 bg-[#12161C]/95 px-3 py-2 backdrop-blur-md sm:px-4 sm:py-3">
         <button
           type="button"
           onClick={() => router.back()}
@@ -101,7 +101,7 @@ export default function DocumentViewerClient () {
           type="button"
           disabled={loading || !!error}
           onClick={() => void handleDownload()}
-          className="btn-touch shrink-0 rounded-xl bg-teal-600 px-4 font-semibold text-white disabled:opacity-50"
+          className="btn-touch shrink-0 rounded-xl bg-[#1F5E3A] px-4 font-semibold text-white disabled:opacity-50"
         >
           Save
         </button>
@@ -109,9 +109,9 @@ export default function DocumentViewerClient () {
 
       <main className="relative flex min-h-0 flex-1 flex-col">
         {loading && (
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-slate-300">
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-[#CBD1DA]">
             <div
-              className="h-10 w-10 animate-spin rounded-full border-2 border-teal-400 border-t-transparent"
+              className="h-10 w-10 animate-spin rounded-full border-2 border-[#2E7D4F] border-t-transparent"
               aria-hidden
             />
             <p className="text-sm">Loading document…</p>
@@ -124,7 +124,7 @@ export default function DocumentViewerClient () {
             <button
               type="button"
               onClick={() => void load()}
-              className="btn-touch rounded-xl bg-teal-600 px-5 font-semibold text-white"
+              className="btn-touch rounded-xl bg-[#1F5E3A] px-5 font-semibold text-white"
             >
               Try again
             </button>
@@ -145,7 +145,7 @@ export default function DocumentViewerClient () {
                 className="h-[calc(100dvh-4.5rem)] w-full flex-1 border-0 bg-white"
               />
             </object>
-            <p className="shrink-0 px-4 py-3 text-center text-xs text-slate-400">
+            <p className="shrink-0 px-4 py-3 text-center text-xs text-[#8A94A3]">
               Pinch to zoom · Use Save to download or share
             </p>
           </div>

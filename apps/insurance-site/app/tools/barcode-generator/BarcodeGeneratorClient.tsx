@@ -337,7 +337,7 @@ export default function BarcodeGeneratorClient () {
         </div>
       ) : null}
       {info ? (
-        <div className="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+        <div className="rounded-md border border-[#5AA377] bg-[#EEF6F0] px-3 py-2 text-sm text-[#1F5E3A]">
           {info}
         </div>
       ) : null}
@@ -489,7 +489,7 @@ export default function BarcodeGeneratorClient () {
                 </thead>
                 <tbody>
                   {placements.map((p, i) => (
-                    <tr key={p.id} className={selectedId === p.id ? 'bg-blue-50' : ''}>
+                    <tr key={p.id} className={selectedId === p.id ? 'bg-[#EEF6F0]' : ''}>
                       <td className="px-2 py-1">{i + 1}</td>
                       <td className="px-2 py-1">
                         <Select value={p.style} onValueChange={v => updatePlacement(p.id, { ...p, style: v as BarcodeStyleId })}>

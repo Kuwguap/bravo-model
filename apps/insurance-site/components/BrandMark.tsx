@@ -41,7 +41,7 @@ export default function BrandMark ({
       {showWordmark && (
         <span
           className={`text-lg font-bold tracking-tight md:text-xl ${
-            invert ? 'text-white' : 'text-slate-900'
+            invert ? 'text-white' : 'text-[#12161C]'
           }`}
         >
           NJ Coverage

@@ -26,23 +26,23 @@ export default function CoverageCard ({ coverage }: CoverageCardProps) {
 
   return (
     <div className="surface-card p-6 md:p-10">
-      <h2 className="text-2xl font-bold tracking-tight text-slate-900">Your coverage</h2>
-      <p className="mt-2 text-slate-600">
+      <h2 className="text-2xl font-bold tracking-tight text-[#12161C]">Your coverage</h2>
+      <p className="mt-2 text-[#5A6472]">
         What&apos;s included on your policy today—contact us to make changes.
       </p>
 
       <div className="mt-8 mb-10">
-        <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+        <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-[#6B7480]">
           Included
         </h3>
         <div className="grid gap-4 md:grid-cols-2">
           {activeCoverage.map(item => (
             <div
               key={item.key}
-              className="rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50 to-teal-50/80 p-4 ring-1 ring-emerald-600/10"
+              className="rounded-2xl border border-[#B7D9C4]/80 bg-gradient-to-br from-[#EEF6F0] to-[#EEF6F0]/80 p-4 ring-1 ring-[#2E7D4F]/10"
             >
               <div className="flex items-start gap-3">
-                <svg className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="mt-0.5 h-5 w-5 shrink-0 text-[#2E7D4F]" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -50,8 +50,8 @@ export default function CoverageCard ({ coverage }: CoverageCardProps) {
                   />
                 </svg>
                 <div>
-                  <h4 className="font-semibold text-slate-900">{item.name}</h4>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-600">{item.description}</p>
+                  <h4 className="font-semibold text-[#12161C]">{item.name}</h4>
+                  <p className="mt-1 text-sm leading-relaxed text-[#5A6472]">{item.description}</p>
                 </div>
               </div>
             </div>
@@ -61,14 +61,14 @@ export default function CoverageCard ({ coverage }: CoverageCardProps) {
 
       {inactiveCoverage.length > 0 && (
         <div>
-          <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+          <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-[#6B7480]">
             Not included
           </h3>
           <div className="grid gap-4 md:grid-cols-2">
             {inactiveCoverage.map(item => (
-              <div key={item.key} className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 opacity-90">
+              <div key={item.key} className="rounded-2xl border border-[#E4E7EC] bg-[#F5F3EC]/80 p-4 opacity-90">
                 <div className="flex items-start gap-3">
-                  <svg className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="mt-0.5 h-5 w-5 shrink-0 text-[#8A94A3]" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -76,8 +76,8 @@ export default function CoverageCard ({ coverage }: CoverageCardProps) {
                     />
                   </svg>
                   <div>
-                    <h4 className="font-medium text-slate-700">{item.name}</h4>
-                    <p className="mt-1 text-sm text-slate-500">{item.description}</p>
+                    <h4 className="font-medium text-[#232B36]">{item.name}</h4>
+                    <p className="mt-1 text-sm text-[#6B7480]">{item.description}</p>
                   </div>
                 </div>
               </div>
@@ -86,8 +86,8 @@ export default function CoverageCard ({ coverage }: CoverageCardProps) {
         </div>
       )}
 
-      <div className="mt-10 rounded-2xl border border-teal-200/80 bg-teal-50/80 p-5 ring-1 ring-teal-600/10">
-        <p className="text-sm leading-relaxed text-teal-950">
+      <div className="mt-10 rounded-2xl border border-[#B7D9C4]/80 bg-[#EEF6F0]/80 p-5 ring-1 ring-[#1F5E3A]/10">
+        <p className="text-sm leading-relaxed text-[#123D26]">
           <span className="font-semibold">Need changes?</span> Reach out to your agent or customer
           service to update coverage—we&apos;re here to help.
         </p>

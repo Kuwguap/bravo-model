@@ -7,8 +7,8 @@ export default function NoPolicyCard () {
     <section className="surface-card p-6 md:p-8">
       <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">No active policy</h2>
-          <p className="mt-1 max-w-xl text-sm text-slate-600">
+          <h2 className="text-lg font-semibold text-[#12161C]">No active policy</h2>
+          <p className="mt-1 max-w-xl text-sm text-[#5A6472]">
             You don&apos;t have coverage on file yet. Buy a policy to start tracking your billing,
             documents, and renewal date here.
           </p>

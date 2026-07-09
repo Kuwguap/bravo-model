@@ -25,8 +25,8 @@ export default function AccountSettingsCard ({ billingAddress, phone, onChanged 
 
   return (
     <section className="surface-card p-6 md:p-8">
-      <h2 className="text-lg font-semibold text-slate-900">Account settings</h2>
-      <p className="mt-1 text-sm text-slate-500">
+      <h2 className="text-lg font-semibold text-[#12161C]">Account settings</h2>
+      <p className="mt-1 text-sm text-[#6B7480]">
         Keep your contact and billing information current.
       </p>
 
@@ -105,17 +105,17 @@ function SettingButton ({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50/40 hover:shadow-sm"
+      className="flex items-start gap-3 rounded-2xl border border-[#E4E7EC] bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-[#5AA377] hover:bg-[#EEF6F0]/40 hover:shadow-sm"
     >
       <span
         aria-hidden
-        className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-teal-100 text-teal-700"
+        className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-[#DCEDE3] text-[#1F5E3A]"
       >
         {icon}
       </span>
       <span className="min-w-0">
-        <span className="block font-semibold text-slate-900">{title}</span>
-        <span className="block truncate text-xs text-slate-500">{subtitle}</span>
+        <span className="block font-semibold text-[#12161C]">{title}</span>
+        <span className="block truncate text-xs text-[#6B7480]">{subtitle}</span>
       </span>
     </button>
   )
@@ -134,18 +134,18 @@ function ModalShell ({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#12161C]/60 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
     >
       <div className="surface-card w-full max-w-md p-6 shadow-2xl md:p-8">
-        <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-        <p className="mt-1 text-sm text-slate-600">{description}</p>
+        <h3 className="text-lg font-bold text-[#12161C]">{title}</h3>
+        <p className="mt-1 text-sm text-[#5A6472]">{description}</p>
         <div className="mt-5">{children}</div>
         <button
           type="button"
           onClick={onClose}
-          className="mt-3 w-full rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="mt-3 w-full rounded-xl border border-[#E4E7EC] py-2.5 text-sm font-semibold text-[#232B36] hover:bg-[#F5F3EC]"
         >
           Close
         </button>
@@ -366,7 +366,7 @@ function PasswordModal ({
           disabled={!enabled}
         />
         {msg && (
-          <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+          <p className="rounded-lg border border-[#B7D9C4] bg-[#EEF6F0] px-3 py-2 text-sm text-[#123D26]">
             {msg}
           </p>
         )}
@@ -407,7 +407,7 @@ function Input ({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-semibold uppercase text-slate-500">
+      <span className="mb-1 block text-xs font-semibold uppercase text-[#6B7480]">
         {label}
         {required && <span className="ml-1 text-red-500">*</span>}
       </span>
@@ -417,7 +417,7 @@ function Input ({
         onChange={e => onChange(e.target.value)}
         disabled={disabled}
         maxLength={maxLength}
-        className="w-full rounded-xl border border-slate-200 px-3 py-2.5 disabled:bg-slate-50 disabled:text-slate-400"
+        className="w-full rounded-xl border border-[#E4E7EC] px-3 py-2.5 disabled:bg-[#F5F3EC] disabled:text-[#8A94A3]"
       />
     </label>
   )

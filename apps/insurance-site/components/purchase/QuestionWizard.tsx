@@ -126,7 +126,7 @@ export default function QuestionWizard ({
         <button
           type="button"
           onClick={back}
-          className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+          className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-[#5A6472] transition hover:bg-[#ECE8DD] hover:text-[#12161C]"
         >
           <ChevronLeft className="size-4" />
           {stepIdx === 0 ? (
@@ -141,24 +141,24 @@ export default function QuestionWizard ({
 
         {/* Step counter — explicit pill so it stays legible on every viewport. */}
         <span
-          className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-800 ring-1 ring-teal-200"
+          className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-[#EEF6F0] px-3 py-1 text-xs font-semibold text-[#164A2E] ring-1 ring-[#B7D9C4]"
           aria-label={`Question ${stepIdx + 1} of ${total}`}
         >
           <span className="font-bold tabular-nums">{stepIdx + 1}</span>
-          <span className="text-teal-600/80">of</span>
+          <span className="text-[#1F5E3A]/80">of</span>
           <span className="tabular-nums">{total}</span>
         </span>
       </div>
 
-      <div className="mb-8 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+      <div className="mb-8 h-1.5 w-full overflow-hidden rounded-full bg-[#E4E7EC]">
         <div
-          className="h-full rounded-full bg-teal-600 transition-all duration-300 ease-out"
+          className="h-full rounded-full bg-[#1F5E3A] transition-all duration-300 ease-out"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <h2 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">
+      <div className="rounded-2xl border border-[#E4E7EC] bg-white p-6 shadow-sm sm:p-8">
+        <h2 className="text-2xl font-bold leading-tight text-[#12161C] sm:text-3xl">
           {step.label}
         </h2>
 
@@ -171,10 +171,10 @@ export default function QuestionWizard ({
                 type="button"
                 onClick={() => answer(opt.value)}
                 className={[
-                  'group flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500',
+                  'group flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7D4F]',
                   isActive
-                    ? 'border-teal-600 bg-teal-50 text-teal-900 shadow-sm'
-                    : 'border-slate-200 bg-white text-slate-800 hover:border-teal-400 hover:bg-teal-50/40',
+                    ? 'border-[#1F5E3A] bg-[#EEF6F0] text-[#123D26] shadow-sm'
+                    : 'border-[#E4E7EC] bg-white text-[#1A2028] hover:border-[#2E7D4F] hover:bg-[#EEF6F0]/40',
                 ].join(' ')}
               >
                 <span>{opt.label}</span>
@@ -183,8 +183,8 @@ export default function QuestionWizard ({
                   className={[
                     'inline-flex size-5 items-center justify-center rounded-full border-2 transition',
                     isActive
-                      ? 'border-teal-600 bg-teal-600 text-white'
-                      : 'border-slate-300 bg-white text-transparent group-hover:border-teal-500',
+                      ? 'border-[#1F5E3A] bg-[#1F5E3A] text-white'
+                      : 'border-[#CBD1DA] bg-white text-transparent group-hover:border-[#2E7D4F]',
                   ].join(' ')}
                 >
                   <svg viewBox="0 0 16 16" className="size-3 fill-current">
@@ -197,7 +197,7 @@ export default function QuestionWizard ({
         </div>
       </div>
 
-      <p className="mt-6 text-center text-xs text-slate-500">
+      <p className="mt-6 text-center text-xs text-[#6B7480]">
         Take 30 seconds to answer a few questions to proceed to checkout.
       </p>
     </div>

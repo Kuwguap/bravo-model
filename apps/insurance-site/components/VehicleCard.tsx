@@ -86,8 +86,8 @@ export default function VehicleCard ({ policyholderName, vehicle }: VehicleCardP
   return (
     <div className="surface-card p-6 md:p-8">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-        <h2 className="text-lg font-semibold text-slate-900">Your vehicle</h2>
-        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-800">
+        <h2 className="text-lg font-semibold text-[#12161C]">Your vehicle</h2>
+        <span className="rounded-full bg-[#DCEDE3] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#164A2E]">
           Active
         </span>
       </div>
@@ -95,8 +95,8 @@ export default function VehicleCard ({ policyholderName, vehicle }: VehicleCardP
       {!editing ? (
         <>
           <div className="mb-8 flex items-center gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-teal-50 ring-1 ring-teal-600/15">
-              <svg className="h-8 w-8 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#EEF6F0] ring-1 ring-[#1F5E3A]/15">
+              <svg className="h-8 w-8 text-[#1F5E3A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -112,42 +112,42 @@ export default function VehicleCard ({ policyholderName, vehicle }: VehicleCardP
               </svg>
             </div>
             <div className="min-w-0">
-              <h3 className="truncate text-xl font-bold text-teal-800">{vehicle.vehicleName}</h3>
+              <h3 className="truncate text-xl font-bold text-[#164A2E]">{vehicle.vehicleName}</h3>
               {subtitleParts.length > 0 ? (
-                <p className="truncate text-sm text-slate-600">{subtitleParts.join(' · ')}</p>
+                <p className="truncate text-sm text-[#5A6472]">{subtitleParts.join(' · ')}</p>
               ) : null}
-              <p className="truncate text-sm text-slate-500">Policy {vehicle.policyNumber}</p>
+              <p className="truncate text-sm text-[#6B7480]">Policy {vehicle.policyNumber}</p>
             </div>
           </div>
 
           <div className="space-y-1">
-            <div className="flex justify-between gap-4 border-b border-slate-100 py-3">
-              <span className="text-slate-600">Vehicle</span>
-              <span className="max-w-[60%] truncate text-right font-medium text-slate-900">
+            <div className="flex justify-between gap-4 border-b border-[#ECE8DD] py-3">
+              <span className="text-[#5A6472]">Vehicle</span>
+              <span className="max-w-[60%] truncate text-right font-medium text-[#12161C]">
                 {vehicle.vehicleName}
               </span>
             </div>
-            <div className="flex justify-between gap-4 border-b border-slate-100 py-3">
-              <span className="text-slate-600">VIN</span>
-              <span className="font-mono text-sm font-medium text-slate-900">{vehicle.vin}</span>
+            <div className="flex justify-between gap-4 border-b border-[#ECE8DD] py-3">
+              <span className="text-[#5A6472]">VIN</span>
+              <span className="font-mono text-sm font-medium text-[#12161C]">{vehicle.vin}</span>
             </div>
             {(vehicle.trimLevel || vehicle.bodyClass) && (
-              <div className="flex justify-between gap-4 border-b border-slate-100 py-3">
-                <span className="text-slate-600">Style</span>
-                <span className="max-w-[60%] text-right text-sm text-slate-900">
+              <div className="flex justify-between gap-4 border-b border-[#ECE8DD] py-3">
+                <span className="text-[#5A6472]">Style</span>
+                <span className="max-w-[60%] text-right text-sm text-[#12161C]">
                   {[vehicle.trimLevel, vehicle.bodyClass].filter(Boolean).join(' · ') || '—'}
                 </span>
               </div>
             )}
-            <div className="flex justify-between gap-4 border-b border-slate-100 py-3">
-              <span className="text-slate-600">Policy number</span>
-              <span className="max-w-[55%] truncate text-right font-medium text-slate-900">
+            <div className="flex justify-between gap-4 border-b border-[#ECE8DD] py-3">
+              <span className="text-[#5A6472]">Policy number</span>
+              <span className="max-w-[55%] truncate text-right font-medium text-[#12161C]">
                 {vehicle.policyNumber}
               </span>
             </div>
             <div className="flex justify-between gap-4 py-3">
-              <span className="text-slate-600">Annual premium</span>
-              <span className="text-lg font-bold text-teal-700">${vehicle.premium.toFixed(2)}</span>
+              <span className="text-[#5A6472]">Annual premium</span>
+              <span className="text-lg font-bold text-[#1F5E3A]">${vehicle.premium.toFixed(2)}</span>
             </div>
           </div>
 
@@ -158,21 +158,21 @@ export default function VehicleCard ({ policyholderName, vehicle }: VehicleCardP
               setEditing(true)
               setSaveErr('')
             }}
-            className="mt-6 w-full rounded-xl border border-teal-200 bg-teal-50 py-2.5 text-sm font-semibold text-teal-900 transition hover:bg-teal-100"
+            className="mt-6 w-full rounded-xl border border-[#B7D9C4] bg-[#EEF6F0] py-2.5 text-sm font-semibold text-[#123D26] transition hover:bg-[#DCEDE3]"
           >
             Edit vehicle details
           </button>
         </>
       ) : (
-        <div className="space-y-4 border-t border-slate-100 pt-6">
-          <p className="text-sm text-slate-600">
+        <div className="space-y-4 border-t border-[#ECE8DD] pt-6">
+          <p className="text-sm text-[#5A6472]">
             Decode fills fields from the free NHTSA VIN database — adjust anything before saving.
           </p>
           <div className="flex flex-wrap items-end gap-3">
             <label className="min-w-[12rem] flex-1">
-              <span className="mb-1 block text-xs font-semibold text-slate-600">VIN</span>
+              <span className="mb-1 block text-xs font-semibold text-[#5A6472]">VIN</span>
               <input
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 font-mono text-sm"
+                className="w-full rounded-xl border border-[#E4E7EC] px-3 py-2 font-mono text-sm"
                 value={draft.vin}
                 onChange={e =>
                   setDraft(d => ({
@@ -186,51 +186,51 @@ export default function VehicleCard ({ policyholderName, vehicle }: VehicleCardP
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold text-slate-600">Year</span>
+              <span className="mb-1 block text-xs font-semibold text-[#5A6472]">Year</span>
               <input
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-[#E4E7EC] px-3 py-2 text-sm"
                 value={draft.modelYear}
                 onChange={e => setDraft(d => ({ ...d, modelYear: e.target.value }))}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold text-slate-600">Make</span>
+              <span className="mb-1 block text-xs font-semibold text-[#5A6472]">Make</span>
               <input
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-[#E4E7EC] px-3 py-2 text-sm"
                 value={draft.vehicleMake}
                 onChange={e => setDraft(d => ({ ...d, vehicleMake: e.target.value }))}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold text-slate-600">Model</span>
+              <span className="mb-1 block text-xs font-semibold text-[#5A6472]">Model</span>
               <input
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-[#E4E7EC] px-3 py-2 text-sm"
                 value={draft.vehicleModel}
                 onChange={e => setDraft(d => ({ ...d, vehicleModel: e.target.value }))}
               />
             </label>
             <label className="block sm:col-span-1">
-              <span className="mb-1 block text-xs font-semibold text-slate-600">Trim</span>
+              <span className="mb-1 block text-xs font-semibold text-[#5A6472]">Trim</span>
               <input
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-[#E4E7EC] px-3 py-2 text-sm"
                 value={draft.trimLevel}
                 onChange={e => setDraft(d => ({ ...d, trimLevel: e.target.value }))}
               />
             </label>
             <label className="block sm:col-span-2">
-              <span className="mb-1 block text-xs font-semibold text-slate-600">Body class</span>
+              <span className="mb-1 block text-xs font-semibold text-[#5A6472]">Body class</span>
               <input
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-[#E4E7EC] px-3 py-2 text-sm"
                 value={draft.bodyClass}
                 onChange={e => setDraft(d => ({ ...d, bodyClass: e.target.value }))}
               />
             </label>
             <label className="block sm:col-span-3">
-              <span className="mb-1 block text-xs font-semibold text-slate-600">
-                Display name <span className="font-normal text-slate-500">(shown on policy)</span>
+              <span className="mb-1 block text-xs font-semibold text-[#5A6472]">
+                Display name <span className="font-normal text-[#6B7480]">(shown on policy)</span>
               </span>
               <input
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-[#E4E7EC] px-3 py-2 text-sm"
                 value={draft.vehicleName}
                 onChange={e => setDraft(d => ({ ...d, vehicleName: e.target.value }))}
               />
@@ -258,7 +258,7 @@ export default function VehicleCard ({ policyholderName, vehicle }: VehicleCardP
                 setDraft(toDraft(vehicle))
                 setSaveErr('')
               }}
-              className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-xl border border-[#E4E7EC] px-4 py-2.5 text-sm font-semibold text-[#232B36] hover:bg-[#F5F3EC]"
             >
               Cancel
             </button>
@@ -270,7 +270,7 @@ export default function VehicleCard ({ policyholderName, vehicle }: VehicleCardP
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="mt-8 w-full rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-teal-800 transition hover:border-teal-300 hover:bg-teal-50"
+          className="mt-8 w-full rounded-xl border border-[#E4E7EC] py-2.5 text-sm font-semibold text-[#164A2E] transition hover:border-[#5AA377] hover:bg-[#EEF6F0]"
         >
           View policy details
         </button>
@@ -278,37 +278,37 @@ export default function VehicleCard ({ policyholderName, vehicle }: VehicleCardP
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#12161C]/60 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="policy-dialog-title"
         >
           <div className="surface-card max-h-[min(90vh,600px)] w-full max-w-lg overflow-y-auto p-6 shadow-2xl md:p-8">
             <div className="mb-4 flex items-start justify-between gap-4">
-              <h3 id="policy-dialog-title" className="text-xl font-bold text-slate-900">
+              <h3 id="policy-dialog-title" className="text-xl font-bold text-[#12161C]">
                 Policy details
               </h3>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-2 py-1 text-sm font-medium text-slate-500 hover:bg-slate-100"
+                className="rounded-lg px-2 py-1 text-sm font-medium text-[#6B7480] hover:bg-[#ECE8DD]"
               >
                 Close
               </button>
             </div>
             <dl className="mt-2 space-y-4 text-sm">
               <div>
-                <dt className="font-medium text-slate-500">Policyholder</dt>
-                <dd className="mt-1 text-slate-900">{policyholderName}</dd>
+                <dt className="font-medium text-[#6B7480]">Policyholder</dt>
+                <dd className="mt-1 text-[#12161C]">{policyholderName}</dd>
               </div>
               <div>
-                <dt className="font-medium text-slate-500">Vehicle</dt>
-                <dd className="mt-1 text-slate-900">{vehicle.vehicleName}</dd>
+                <dt className="font-medium text-[#6B7480]">Vehicle</dt>
+                <dd className="mt-1 text-[#12161C]">{vehicle.vehicleName}</dd>
               </div>
               {(vehicle.modelYear || vehicle.vehicleMake || vehicle.vehicleModel) && (
                 <div>
-                  <dt className="font-medium text-slate-500">Year / make / model</dt>
-                  <dd className="mt-1 text-slate-900">
+                  <dt className="font-medium text-[#6B7480]">Year / make / model</dt>
+                  <dd className="mt-1 text-[#12161C]">
                     {[vehicle.modelYear, vehicle.vehicleMake, vehicle.vehicleModel]
                       .filter(Boolean)
                       .join(' ')}
@@ -316,24 +316,24 @@ export default function VehicleCard ({ policyholderName, vehicle }: VehicleCardP
                 </div>
               )}
               <div>
-                <dt className="font-medium text-slate-500">VIN</dt>
-                <dd className="mt-1 font-mono text-slate-900">{vehicle.vin}</dd>
+                <dt className="font-medium text-[#6B7480]">VIN</dt>
+                <dd className="mt-1 font-mono text-[#12161C]">{vehicle.vin}</dd>
               </div>
               <div>
-                <dt className="font-medium text-slate-500">Policy number</dt>
-                <dd className="mt-1 text-slate-900">{vehicle.policyNumber}</dd>
+                <dt className="font-medium text-[#6B7480]">Policy number</dt>
+                <dd className="mt-1 text-[#12161C]">{vehicle.policyNumber}</dd>
               </div>
               <div>
-                <dt className="font-medium text-slate-500">Effective date</dt>
-                <dd className="mt-1 text-slate-900">{vehicle.policyEffectiveDate}</dd>
+                <dt className="font-medium text-[#6B7480]">Effective date</dt>
+                <dd className="mt-1 text-[#12161C]">{vehicle.policyEffectiveDate}</dd>
               </div>
               <div>
-                <dt className="font-medium text-slate-500">Expiration date</dt>
-                <dd className="mt-1 text-slate-900">{vehicle.policyExpirationDate}</dd>
+                <dt className="font-medium text-[#6B7480]">Expiration date</dt>
+                <dd className="mt-1 text-[#12161C]">{vehicle.policyExpirationDate}</dd>
               </div>
               <div>
-                <dt className="font-medium text-slate-500">Address</dt>
-                <dd className="mt-1 whitespace-pre-wrap text-slate-900">{vehicle.policyAddress}</dd>
+                <dt className="font-medium text-[#6B7480]">Address</dt>
+                <dd className="mt-1 whitespace-pre-wrap text-[#12161C]">{vehicle.policyAddress}</dd>
               </div>
             </dl>
             <button

@@ -86,29 +86,29 @@ export default function ApprovedScreen ({
 
   return (
     <div className="flex min-h-[70vh] w-full items-center justify-center px-4 py-12">
-      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-teal-200 bg-gradient-to-b from-white to-teal-50/60 p-10 text-center shadow-xl shadow-teal-900/10">
-        <div className="mx-auto inline-flex size-20 items-center justify-center rounded-full bg-teal-100 text-teal-700 ring-4 ring-teal-200/70">
+      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-[#B7D9C4] bg-gradient-to-b from-white to-[#EEF6F0]/60 p-10 text-center shadow-xl shadow-[#123D26]/10">
+        <div className="mx-auto inline-flex size-20 items-center justify-center rounded-full bg-[#DCEDE3] text-[#1F5E3A] ring-4 ring-[#B7D9C4]/70">
           <CheckCircle2 className="size-12" strokeWidth={2.25} />
         </div>
 
-        <h1 className="mt-6 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        <h1 className="mt-6 text-3xl font-bold tracking-tight text-[#12161C] sm:text-4xl">
           Congratulations <span aria-hidden>🎉</span>
         </h1>
-        <p className="mt-2 text-lg font-semibold text-teal-800">You’re approved!</p>
+        <p className="mt-2 text-lg font-semibold text-[#164A2E]">You’re approved!</p>
 
-        <p className="mt-6 text-sm text-slate-600">
-          We’ve approved your <span className="font-semibold text-slate-900">{planLabel}</span> auto
+        <p className="mt-6 text-sm text-[#5A6472]">
+          We’ve approved your <span className="font-semibold text-[#12161C]">{planLabel}</span> auto
           policy. Routing you to secure payment in…
         </p>
 
         <div
           aria-live="polite"
-          className="mx-auto mt-4 flex size-24 items-center justify-center rounded-full bg-white text-5xl font-bold text-teal-700 shadow-lg shadow-teal-900/10 ring-1 ring-teal-200"
+          className="mx-auto mt-4 flex size-24 items-center justify-center rounded-full bg-white text-5xl font-bold text-[#1F5E3A] shadow-lg shadow-[#123D26]/10 ring-1 ring-[#B7D9C4]"
         >
           {remaining > 0 ? remaining : 'Go!'}
         </div>
 
-        <p className="mt-6 text-xs text-slate-500">
+        <p className="mt-6 text-xs text-[#6B7480]">
           Do not refresh — Stripe Checkout will open automatically.
         </p>
       </div>

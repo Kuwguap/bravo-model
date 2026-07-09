@@ -435,12 +435,12 @@ export default function AdminPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-100 to-slate-50">
-      <header className="sticky top-0 z-10 border-b border-white/10 bg-slate-950/95 backdrop-blur-md">
+    <div className="min-h-screen bg-gradient-to-b from-[#ECE8DD] to-[#F5F3EC]">
+      <header className="sticky top-0 z-10 border-b border-white/10 bg-[#12161C]/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
             <BrandMark href="/" invert />
-            <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-teal-200">
+            <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#B7D9C4]">
               Admin
             </span>
           </div>
@@ -477,7 +477,7 @@ export default function AdminPage() {
         </div>
 
         {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
+          <div className="mb-6 p-4 bg-[#EEF6F0] border border-[#B7D9C4] rounded-lg text-[#164A2E]">
             {lastSubmitWasEdit
               ? 'Client updated successfully.'
               : 'Client added successfully! They can now log in with their credentials.'}
@@ -508,7 +508,7 @@ export default function AdminPage() {
 
         <form id="admin-client-form" onSubmit={handleSubmit} className="space-y-8">
           {/* Insurance card — top of form (attach + AI scan for new/edit client) */}
-          <div className="rounded-xl border border-teal-200 bg-white p-6 shadow-sm">
+          <div className="rounded-xl border border-[#B7D9C4] bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900">Insurance card (PDF or photo)</h2>
             <p className="mt-1 text-sm text-gray-600">
               {!editingUserId ? (
@@ -531,7 +531,7 @@ export default function AdminPage() {
               <input
                 type="file"
                 accept="application/pdf,.pdf,image/jpeg,.jpg,.jpeg,image/png,.png,image/webp,.webp,image/gif,.gif"
-                className="mt-1 w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-teal-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-teal-800 hover:file:bg-teal-100"
+                className="mt-1 w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[#EEF6F0] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#164A2E] hover:file:bg-[#DCEDE3]"
                 onChange={e => {
                   const f = e.target.files?.[0] ?? null
                   setInsuranceCardFile(f)
@@ -540,12 +540,12 @@ export default function AdminPage() {
                 }}
               />
               {insuranceCardFile && (
-                <p className="mt-2 text-sm font-medium text-teal-800">
+                <p className="mt-2 text-sm font-medium text-[#164A2E]">
                   Selected: {insuranceCardFile.name}
                 </p>
               )}
               {insuranceCardFile && policyAiLoading && (
-                <p className="mt-3 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900">
+                <p className="mt-3 rounded-lg border border-[#B7D9C4] bg-[#EEF6F0] px-3 py-2 text-sm text-[#123D26]">
                   {isPdfInsuranceFile(insuranceCardFile)
                     ? 'Scanning PDF with AI… filling policy, name, address, VIN, and vehicle when detected.'
                     : 'Scanning image with AI… filling policy, name, address, VIN, and vehicle when detected.'}
@@ -555,7 +555,7 @@ export default function AdminPage() {
                 <div
                   className={`mt-3 rounded-lg border px-3 py-2 text-sm ${
                     policyAiHint.includes('Filled:')
-                      ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                      ? 'border-[#B7D9C4] bg-[#EEF6F0] text-[#123D26]'
                       : 'border-gray-200 bg-gray-50 text-gray-800'
                   }`}
                   role="status"
@@ -581,7 +581,7 @@ export default function AdminPage() {
                   required
                   value={form.email}
                   onChange={e => setForm({...form, email: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="client@email.com"
                 />
               </div>
@@ -608,7 +608,7 @@ export default function AdminPage() {
                     autoComplete="new-password"
                     value={editNewPassword}
                     onChange={e => setEditNewPassword(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                     placeholder="Leave blank to keep current"
                   />
                   <p className="mt-1 text-xs text-gray-500">Minimum 6 characters if changing.</p>
@@ -628,7 +628,7 @@ export default function AdminPage() {
                   required
                   value={form.name}
                   onChange={e => setForm({...form, name: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="John Doe"
                 />
               </div>
@@ -639,7 +639,7 @@ export default function AdminPage() {
                   required
                   value={form.phone}
                   onChange={e => setForm({...form, phone: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="(555) 123-4567"
                 />
               </div>
@@ -651,7 +651,7 @@ export default function AdminPage() {
                   type="text"
                   value={form.memberSince}
                   onChange={e => setForm({ ...form, memberSince: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder={defaultMemberSinceLabel()}
                   autoComplete="off"
                 />
@@ -675,7 +675,7 @@ export default function AdminPage() {
                   value={form.vin}
                   onChange={e =>
                     setForm({ ...form, vin: e.target.value.toUpperCase().replace(/\s+/g, '') })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="17-character VIN"
                   maxLength={17}
                   autoComplete="off"
@@ -690,7 +690,7 @@ export default function AdminPage() {
                   type="text"
                   value={form.modelYear}
                   onChange={e => setForm({ ...form, modelYear: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="e.g. 2023"
                   autoComplete="off"
                 />
@@ -701,7 +701,7 @@ export default function AdminPage() {
                   type="text"
                   value={form.vehicleMake}
                   onChange={e => setForm({ ...form, vehicleMake: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="e.g. Tesla"
                   autoComplete="off"
                 />
@@ -712,7 +712,7 @@ export default function AdminPage() {
                   type="text"
                   value={form.vehicleModel}
                   onChange={e => setForm({ ...form, vehicleModel: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="e.g. Model 3"
                   autoComplete="off"
                 />
@@ -723,7 +723,7 @@ export default function AdminPage() {
                   type="text"
                   value={form.trimLevel}
                   onChange={e => setForm({ ...form, trimLevel: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="Trim / package"
                   autoComplete="off"
                 />
@@ -734,7 +734,7 @@ export default function AdminPage() {
                   type="text"
                   value={form.bodyClass}
                   onChange={e => setForm({ ...form, bodyClass: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="e.g. Sedan/Saloon"
                   autoComplete="off"
                 />
@@ -748,7 +748,7 @@ export default function AdminPage() {
                   required
                   value={form.vehicleName}
                   onChange={e => setForm({ ...form, vehicleName: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="2024 Toyota Camry"
                 />
               </div>
@@ -766,7 +766,7 @@ export default function AdminPage() {
                   required
                   value={form.policyNumber}
                   onChange={e => setForm({ ...form, policyNumber: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="POL-12345678"
                   autoComplete="off"
                 />
@@ -781,15 +781,15 @@ export default function AdminPage() {
                   step="0.01"
                   value={form.annualPremium}
                   onChange={e => setForm({ ...form, annualPremium: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="1200"
                 />
               </div>
-              <div className="md:col-span-2 rounded-lg border border-violet-100 bg-violet-50/70 p-4">
+              <div className="md:col-span-2 rounded-lg border border-[#DCEDE3] bg-[#EEF6F0]/70 p-4">
                 <p className="text-sm font-semibold text-gray-900">AI document scan (optional)</p>
                 <p className="mt-1 text-xs text-gray-600">
                   Choosing a file starts an <strong>automatic AI scan</strong> (requires{' '}
-                  <code className="rounded bg-violet-100/80 px-1 text-[11px]">OPENAI_API_KEY</code> on the server).
+                  <code className="rounded bg-[#DCEDE3]/80 px-1 text-[11px]">OPENAI_API_KEY</code> on the server).
                   Extracts <strong>policy number</strong>, <strong>policyholder name</strong>,{' '}
                   <strong>policy address</strong>, and <strong>VIN</strong>;
                   a valid VIN triggers NHTSA vehicle fill. You can also attach the insurance card file at the{' '}
@@ -803,7 +803,7 @@ export default function AdminPage() {
                     <input
                       type="file"
                       accept="application/pdf,image/png,image/jpeg,image/webp,image/gif"
-                      className="mt-1 w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-violet-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-violet-900 hover:file:bg-violet-200"
+                      className="mt-1 w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[#DCEDE3] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#123D26] hover:file:bg-[#B7D9C4]"
                       onChange={e => {
                         const f = e.target.files?.[0] ?? null
                         setPolicyScanFile(f)
@@ -816,7 +816,7 @@ export default function AdminPage() {
                     type="button"
                     onClick={() => void handleExtractPolicyNumber()}
                     disabled={policyAiLoading}
-                    className="shrink-0 rounded-lg border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-900 shadow-sm hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="shrink-0 rounded-lg border border-[#5AA377] bg-white px-4 py-2 text-sm font-semibold text-[#123D26] shadow-sm hover:bg-[#DCEDE3] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {policyAiLoading ? 'Scanning…' : 'Extract fields'}
                   </button>
@@ -833,7 +833,7 @@ export default function AdminPage() {
                 )}
                 {policyAiHint && (
                   <p
-                    className={`mt-2 text-sm ${policyAiHint.includes('Filled:') ? 'text-emerald-800' : 'text-gray-700'}`}
+                    className={`mt-2 text-sm ${policyAiHint.includes('Filled:') ? 'text-[#164A2E]' : 'text-gray-700'}`}
                     role="status"
                   >
                     {policyAiHint}
@@ -846,7 +846,7 @@ export default function AdminPage() {
                   type="text"
                   value={form.policyAddress}
                   onChange={e => setForm({...form, policyAddress: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder="Garaging / mailing address"
                 />
               </div>
@@ -857,7 +857,7 @@ export default function AdminPage() {
                     type="text"
                     value={form.policyEffectiveDate}
                     onChange={e => setForm({ ...form, policyEffectiveDate: e.target.value })}
-                    className="min-w-[12rem] flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="min-w-[12rem] flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                     placeholder={effectiveDateToday()}
                     autoComplete="off"
                   />
@@ -880,7 +880,7 @@ export default function AdminPage() {
                   type="text"
                   value={form.policyExpirationDate}
                   onChange={e => setForm({ ...form, policyExpirationDate: e.target.value })}
-                  className="mb-2 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="mb-2 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D4F] focus:border-[#2E7D4F]"
                   placeholder={`e.g. ${formatFullPolicyDate(addMonths(new Date(), 12))}`}
                   autoComplete="off"
                 />
@@ -925,10 +925,10 @@ export default function AdminPage() {
                     type="checkbox"
                     checked={form[opt.key as keyof typeof form] as boolean}
                     onChange={e => setForm({ ...form, [opt.key]: e.target.checked })}
-                    className="mt-1 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="mt-1 h-5 w-5 rounded border-gray-300 text-[#1F5E3A] focus:ring-[#2E7D4F]"
                   />
                   <div>
-                    <span className="font-medium text-gray-900 group-hover:text-blue-600">{opt.label}</span>
+                    <span className="font-medium text-gray-900 group-hover:text-[#1F5E3A]">{opt.label}</span>
                     <p className="text-sm text-gray-500">{opt.desc}</p>
                   </div>
                 </label>
@@ -938,7 +938,7 @@ export default function AdminPage() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
+            className="w-full py-3 bg-[#1F5E3A] hover:bg-[#1F5E3A] text-white font-semibold rounded-lg transition"
           >
             {editingUserId ? 'Save changes' : 'Add client'}
           </button>
@@ -980,24 +980,24 @@ export default function AdminPage() {
           refreshSignal={listRefreshSignal}
         />
 
-        <div className="mt-12 rounded-xl border border-blue-200 bg-blue-50 p-6">
-          <h2 className="text-lg font-semibold text-blue-900 mb-2">Supabase schema and RLS</h2>
-          <p className="text-blue-800 text-sm mb-3">
+        <div className="mt-12 rounded-xl border border-[#B7D9C4] bg-[#EEF6F0] p-6">
+          <h2 className="text-lg font-semibold text-[#123D26] mb-2">Supabase schema and RLS</h2>
+          <p className="text-[#164A2E] text-sm mb-3">
             Run the migration in{' '}
-            <code className="text-xs bg-blue-100 px-1 rounded">supabase/migrations/20260422120000_initial_schema.sql</code>{' '}
+            <code className="text-xs bg-[#DCEDE3] px-1 rounded">supabase/migrations/20260422120000_initial_schema.sql</code>{' '}
             from the Supabase SQL Editor (or CLI) to create{' '}
-            <code className="text-xs bg-blue-100 px-1 rounded">profiles</code>,{' '}
-            <code className="text-xs bg-blue-100 px-1 rounded">vehicles</code>, and{' '}
-            <code className="text-xs bg-blue-100 px-1 rounded">coverage</code> with row level security.
-            Copy <code className="text-xs bg-blue-100 px-1 rounded">.env.example</code> to{' '}
-            <code className="text-xs bg-blue-100 px-1 rounded">.env.local</code> with your project URL,
+            <code className="text-xs bg-[#DCEDE3] px-1 rounded">profiles</code>,{' '}
+            <code className="text-xs bg-[#DCEDE3] px-1 rounded">vehicles</code>, and{' '}
+            <code className="text-xs bg-[#DCEDE3] px-1 rounded">coverage</code> with row level security.
+            Copy <code className="text-xs bg-[#DCEDE3] px-1 rounded">.env.example</code> to{' '}
+            <code className="text-xs bg-[#DCEDE3] px-1 rounded">.env.local</code> with your project URL,
             anon key, and (for admin user creation) the service role key — server only.
           </p>
-          <p className="text-blue-800 text-sm">
+          <p className="text-[#164A2E] text-sm">
             <strong>Demo login:</strong> paste{' '}
-            <code className="text-xs bg-blue-100 px-1 rounded">supabase/seed_demo_account.sql</code> in the SQL
-            Editor to create <code className="text-xs bg-blue-100 px-1 rounded">demo@example.com</code> /{' '}
-            <code className="text-xs bg-blue-100 px-1 rounded">demo123</code> (matches the app&apos;s demo data).
+            <code className="text-xs bg-[#DCEDE3] px-1 rounded">supabase/seed_demo_account.sql</code> in the SQL
+            Editor to create <code className="text-xs bg-[#DCEDE3] px-1 rounded">demo@example.com</code> /{' '}
+            <code className="text-xs bg-[#DCEDE3] px-1 rounded">demo123</code> (matches the app&apos;s demo data).
           </p>
         </div>
       </main>

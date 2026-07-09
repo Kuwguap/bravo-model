@@ -108,28 +108,28 @@ export default function BalanceDueCard ({
 
   return (
     <section className="surface-card overflow-hidden p-0">
-      <div className="bg-gradient-to-br from-teal-700 via-teal-800 to-slate-900 px-4 py-6 text-white sm:px-6 md:px-8 md:py-7">
-        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-teal-200">
+      <div className="bg-gradient-to-br from-[#1F5E3A] via-[#164A2E] to-[#12161C] px-4 py-6 text-white sm:px-6 md:px-8 md:py-7">
+        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#B7D9C4]">
           {usingFallback ? 'Estimated monthly total' : 'Balance due'}
         </p>
         <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
           {dollarLabel(balanceCents)}
         </p>
         {hasInvoiceTotal && openInvoice && (
-          <p className="mt-2 text-sm text-teal-100">
+          <p className="mt-2 text-sm text-[#DCEDE3]">
             {multiInvoice
               ? `${openInvoicesCount} invoices due · oldest: ${dateLabel(openInvoice.dueDateIso)}`
               : `Due ${dateLabel(openInvoice.dueDateIso)} · ${openInvoice.periodLabel}`}
           </p>
         )}
         {usingFallback && (
-          <p className="mt-2 text-sm text-teal-100">
+          <p className="mt-2 text-sm text-[#DCEDE3]">
             Combined premium across every active policy. Pay Now will activate
             once an invoice is generated for this account.
           </p>
         )}
         {!hasBalance && (
-          <p className="mt-2 text-sm text-teal-100">
+          <p className="mt-2 text-sm text-[#DCEDE3]">
             You&apos;re all caught up. {autopay ? 'AutoPay handles your next charge.' : 'No payments due right now.'}
           </p>
         )}
@@ -157,8 +157,8 @@ export default function BalanceDueCard ({
             onClick={() => void handleAutopay()}
             className={`btn-touch w-full gap-2 sm:w-auto ${
               autopay
-                ? 'border border-emerald-200 bg-emerald-50 text-emerald-900 hover:bg-emerald-100'
-                : 'border border-slate-200 bg-white text-slate-800 hover:bg-slate-50'
+                ? 'border border-[#B7D9C4] bg-[#EEF6F0] text-[#123D26] hover:bg-[#DCEDE3]'
+                : 'border border-[#E4E7EC] bg-white text-[#1A2028] hover:bg-[#F5F3EC]'
             } rounded-xl font-semibold transition disabled:cursor-not-allowed disabled:opacity-50`}
           >
             <span aria-hidden>🔄</span>
@@ -169,7 +169,7 @@ export default function BalanceDueCard ({
                 : 'Enable AutoPay'}
           </button>
         </div>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-[#6B7480]">
           Payments are processed securely via Stripe.
         </p>
       </div>
