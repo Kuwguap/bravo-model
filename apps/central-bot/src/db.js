@@ -7,7 +7,7 @@ export const supa = () => getServiceClient();
 // ─── Overview metrics ────────────────────────────────────────────────────────
 export async function overview() {
   const client = supa();
-  const [txns, users, deliveries, dueRenewals, insCustomers, activePolicies] = await Promise.all([
+  const [txns, users, deliveries, dueRenewals, insCustomers, activePolicies, comms] = await Promise.all([
     client.from("transactions").select("source, amount_cents, status"),
     client.from("users").select("id", { count: "exact", head: true }),
     client.from("deliveries").select("status"),
@@ -20,7 +20,10 @@ export async function overview() {
     // Insurance side of the shared DB — surfaced so the dashboard is unified.
     client.from("profiles").select("id", { count: "exact", head: true }),
     client.from("policies").select("id", { count: "exact", head: true }).eq("status", "active"),
+    // Facebook comms bot leads (the sheet).
+    client.from("comms_leads").select("status"),
   ]);
+  const commsRows = comms.data || [];
 
   const rows = txns.data || [];
   const paid = rows.filter((r) => r.status === "paid");
@@ -41,6 +44,10 @@ export async function overview() {
     deliveriesOpen: dels.filter((d) => d.status === "accepted").length,
     deliveriesDone: dels.filter((d) => d.status === "delivered").length,
     renewalsDue: dueRenewals.count || 0,
+    commsTotal: commsRows.length,
+    commsCollecting: commsRows.filter((c) => c.status === "collecting").length,
+    commsAwaiting: commsRows.filter((c) => c.status === "awaiting_payment").length,
+    commsConverted: commsRows.filter((c) => c.status === "dispatched" || c.status === "paid").length,
   };
 }
 

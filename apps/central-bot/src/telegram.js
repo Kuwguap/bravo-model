@@ -37,7 +37,8 @@ export async function handleUpdate(update) {
       [
         "🛰 <b>NJ control bot</b>",
         "",
-        "/stats — live totals (revenue, users, deliveries, renewals due)",
+        "/stats — live totals (revenue, users, deliveries, FB leads, renewals)",
+        "/sheet — comms bot sheet summary (Facebook conversations)",
         "/renewals — send any due 28-day renewal emails now",
       ].join("\n"),
     );
@@ -55,7 +56,24 @@ export async function handleUpdate(update) {
         `• Insurance: ${money(o.insRevenueCents)} (${o.insCount})`,
         `Tag customers: <b>${o.userCount}</b> · Insurance: <b>${o.insCustomers}</b> (${o.activePolicies} active)`,
         `Deliveries: ${o.deliveriesOpen} open · ${o.deliveriesDone} done`,
+        `FB leads: <b>${o.commsTotal ?? 0}</b> (${o.commsCollecting ?? 0} collecting · ${o.commsAwaiting ?? 0} awaiting pay · ${o.commsConverted ?? 0} converted)`,
         `Renewals due: <b>${o.renewalsDue}</b>`,
+      ].join("\n"),
+    );
+  }
+
+  if (cmd === "/sheet") {
+    const o = await overview();
+    return send(
+      chatId,
+      [
+        "🗒 <b>Comms bot sheet</b>",
+        `Total conversations: <b>${o.commsTotal ?? 0}</b>`,
+        `• Collecting: ${o.commsCollecting ?? 0}`,
+        `• Awaiting payment: ${o.commsAwaiting ?? 0}`,
+        `• Converted: ${o.commsConverted ?? 0}`,
+        "",
+        "Full live sheet: the dashboard's Sheet tab.",
       ].join("\n"),
     );
   }
@@ -66,7 +84,7 @@ export async function handleUpdate(update) {
     return send(chatId, `✅ Renewals: sent ${r.sent} of ${r.considered} due (${r.errors} errors).`);
   }
 
-  return send(chatId, "Unknown command. Try /stats or /renewals.");
+  return send(chatId, "Unknown command. Try /stats, /sheet or /renewals.");
 }
 
 export async function setWebhook() {

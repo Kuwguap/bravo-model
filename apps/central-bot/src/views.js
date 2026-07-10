@@ -119,7 +119,12 @@ export function overviewPage(o) {
     ${stat("Tag customers", o.userCount, "temp-tag buyers")}
     ${stat("Insurance customers", o.insCustomers, `${o.activePolicies} active policies`)}
     ${stat("Deliveries", `${o.deliveriesOpen}`, `open · ${o.deliveriesDone} delivered`)}
+    ${stat("Facebook leads", o.commsTotal ?? 0, `${o.commsCollecting ?? 0} collecting · ${o.commsConverted ?? 0} converted`)}
     ${stat("Renewals due", o.renewalsDue, "awaiting reminder")}
+  </div>
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+    <div><b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">Comms bot sheet</b><div class="muted">${o.commsAwaiting ?? 0} awaiting payment · live Facebook conversations</div></div>
+    <a class="btn ghost" href="/sheet">Open the sheet →</a>
   </div>
   <div class="card"><div class="row" style="grid-template-columns:1fr auto"><div><b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">Renewal sweep</b><div class="muted">Email every customer whose 28-day tag is due and not yet reminded.</div></div>
   <form method="post" action="/renewals/run"><button class="btn amber">Run sweep now</button></form></div></div>`);
