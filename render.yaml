@@ -91,3 +91,43 @@ services:
       - key: RENEWAL_SWEEP_MINUTES
         value: "360"
       # CENTRAL_PUBLIC_URL is auto-derived from RENDER_EXTERNAL_URL.
+
+  # ── Communications bot (Facebook Messenger lead-gen) ─────────────────────
+  - type: web
+    name: nj-comms-bot
+    runtime: node
+    plan: starter
+    rootDir: apps/comms-bot
+    buildCommand: npm install --prefix ../../packages/shared && npm install
+    startCommand: node src/index.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY # for chat-payment checkout links
+        sync: false
+      - key: FB_PAGE_ACCESS_TOKEN # Meta Page access token
+        sync: false
+      - key: FB_APP_SECRET # Meta app secret (webhook signature verification)
+        sync: false
+      - key: DISPATCH_BOT_URL # hand finished/paid leads to the dispatch bot
+        sync: false
+      - key: DISPATCH_SHARED_SECRET # must match the dispatch bot
+        sync: false
+      - key: FB_VERIFY_TOKEN
+        value: nj-comms-verify
+      - key: APP_URL
+        value: https://njtemporarytag.com
+      - key: TAG_PRICE
+        value: "150"
+      - key: INSURANCE_OPT_IN_PRICE
+        value: "100"
+      - key: COMMS_FOLLOWUP_MINUTES
+        value: "60"
+      - key: COMMS_MAX_FOLLOWUPS
+        value: "2"

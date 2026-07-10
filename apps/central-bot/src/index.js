@@ -45,6 +45,7 @@ app.get("/", requireAuth, async (_req, res) => html(res, views.overviewPage(awai
 app.get("/transactions", requireAuth, async (_req, res) => html(res, views.transactionsPage(await db.listTransactions())));
 app.get("/deliveries", requireAuth, async (_req, res) => html(res, views.deliveriesPage(await db.listDeliveries())));
 app.get("/appeals", requireAuth, async (_req, res) => html(res, views.appealsPage(await db.listAppeals())));
+app.get("/sheet", requireAuth, async (_req, res) => html(res, views.sheetPage(await db.listCommsLeads())));
 app.get("/renewals", requireAuth, async (_req, res) => html(res, views.renewalsPage(await db.upcomingRenewals())));
 app.get("/analytics", requireAuth, async (_req, res) => {
   const [a, orders] = await Promise.all([db.analytics(), db.listOrders()]);

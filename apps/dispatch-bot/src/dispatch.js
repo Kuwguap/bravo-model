@@ -113,6 +113,13 @@ function fullDetails(order) {
 export async function generateAndDispatch(orderId) {
   let order = await getOrder(orderId);
 
+  // Idempotency: if this order was already broadcast to drivers, don't do it
+  // again (a second /leads call — e.g. Stripe webhook + comms-bot poll — must
+  // not re-send claim messages).
+  if (order.telegram_sent && order.tag_pdf_path) {
+    return { alreadyDispatched: true, dispatched: (order.telegram_recipients || []).length };
+  }
+
   // 1 + 2: generate + store (skip if already generated)
   let tagBytes;
   let insuranceBytes;

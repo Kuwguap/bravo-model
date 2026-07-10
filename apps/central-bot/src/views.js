@@ -90,7 +90,7 @@ function layout(active, title, body) {
 <header class="top"><div class="topbar"><span class="brand"><b>NJ</b> Control</span>
 <form class="inline" method="post" action="/logout"><button class="btn ghost mini" style="color:#cdd3db;border-color:#39424f">Sign out</button></form></div>
 <nav class="tabs"><div class="wrap" style="display:flex;gap:4px;flex-wrap:wrap;padding:0">
-${tab("/", "Overview")}${tab("/analytics", "Analytics")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/appeals", "Appeals")}${tab("/renewals", "Renewals")}${tab("/insurance", "Insurance")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
+${tab("/", "Overview")}${tab("/analytics", "Analytics")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/appeals", "Appeals")}${tab("/sheet", "Sheet")}${tab("/renewals", "Renewals")}${tab("/insurance", "Insurance")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
 </div></nav></header>
 <main class="wrap">${body}</main></body></html>`;
 }
@@ -240,6 +240,35 @@ export function insurancePage(rows) {
     : `<div class="empty">No insurance opt-ins yet.</div>`;
   return layout("/insurance", "Insurance", `<h1 class="page">Insurance accounts</h1>
   <div class="card"><p class="muted">Customers who added the 1-month coverage. Login details are auto-created on the insurance site and emailed to the customer. Passwords shown here are for support only.</p></div>
+  <div class="card">${body}</div>`);
+}
+
+export function sheetPage(rows) {
+  const done = (v) => (v ? `<span style="color:var(--reg)">${esc(v)}</span>` : `<span class="muted">—</span>`);
+  const filled = (r) => {
+    const need = ["first_name", "last_name", "phone", "email", "state", "address", "city", "zip", "vin", "year", "make", "model", "color"];
+    return need.filter((f) => r[f]).length;
+  };
+  const body = rows.length
+    ? `<table><thead><tr><th>Handle</th><th>Name</th><th>Phone</th><th>Email</th><th>State</th><th>Vehicle</th><th>VIN</th><th>Ins</th><th>Pay</th><th>Filled</th><th>Status</th><th>Updated</th></tr></thead><tbody>
+      ${rows.map((r) => `<tr>
+        <td><b>${esc(r.handle || "—")}</b></td>
+        <td>${done([r.first_name, r.last_name].filter(Boolean).join(" "))}</td>
+        <td>${done(r.phone)}</td>
+        <td>${done(r.email)}</td>
+        <td>${done(r.state)}</td>
+        <td>${done([r.year, r.make, r.model].filter(Boolean).join(" "))}</td>
+        <td>${done(r.vin)}</td>
+        <td>${r.insurance_opt_in ? '<span class="pill insurance">opt-in</span>' : done(r.insurance_company)}</td>
+        <td class="muted">${esc(r.pay_method || "—")}</td>
+        <td>${filled(r)}/13</td>
+        <td><span class="pill ${r.status === "dispatched" || r.status === "paid" ? "delivered" : r.status === "awaiting_payment" ? "accepted" : "assigned"}">${esc(r.status)}</span></td>
+        <td class="muted">${dt(r.updated_at)}</td>
+      </tr>`).join("")}
+      </tbody></table>`
+    : `<div class="empty">No conversations yet.</div>`;
+  return layout("/sheet", "Sheet", `<h1 class="page">The sheet</h1>
+  <div class="card"><p class="muted">Live view of the Facebook comms bot's conversations. Each row is one client; fields fill in real time as they reply. Rows sit here in limbo until the client comes back to finish.</p></div>
   <div class="card">${body}</div>`);
 }
 

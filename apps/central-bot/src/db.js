@@ -227,6 +227,16 @@ export async function listAppeals(limit = 100) {
   return rows;
 }
 
+// ─── Comms sheet (Facebook lead-gen bot) ─────────────────────────────────────
+export async function listCommsLeads(limit = 200) {
+  const { data } = await supa()
+    .from("comms_leads")
+    .select("*")
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+  return data || [];
+}
+
 // ─── Renewals ────────────────────────────────────────────────────────────────
 export async function upcomingRenewals(limit = 100) {
   const { data } = await supa()
