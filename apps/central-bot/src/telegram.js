@@ -68,6 +68,7 @@ export async function handleUpdate(update) {
       chatId,
       [
         "🗒 <b>Comms bot sheet</b>",
+        `Connected pages: <b>${o.commsAccounts ?? 0}</b> (each its own sheet)`,
         `Total conversations: <b>${o.commsTotal ?? 0}</b>`,
         `• Collecting: ${o.commsCollecting ?? 0}`,
         `• Awaiting payment: ${o.commsAwaiting ?? 0}`,

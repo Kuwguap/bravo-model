@@ -27,13 +27,27 @@ function randomHandle(firstName) {
   return `${base}${Math.floor(1000 + Math.random() * 9000)}`;
 }
 
-export async function getOrCreateLead(psid) {
+/**
+ * Find (or start) the sheet row for a client, scoped to the Facebook account
+ * they messaged. PSIDs are page-scoped, so a lead is identified by the pair
+ * (account, psid) — this is what keeps every page's sheet separate.
+ */
+export async function getOrCreateLead(account, psid) {
   const client = supa();
-  const { data: existing } = await client.from("comms_leads").select("*").eq("fb_psid", String(psid)).maybeSingle();
+  const accountId = account?.id || null;
+  let q = client.from("comms_leads").select("*").eq("fb_psid", String(psid));
+  q = accountId ? q.eq("account_id", accountId) : q.is("account_id", null);
+  const { data: existing } = await q.maybeSingle();
   if (existing) return existing;
   const { data, error } = await client
     .from("comms_leads")
-    .insert({ fb_psid: String(psid), handle: randomHandle(), transcript: [] })
+    .insert({
+      fb_psid: String(psid),
+      account_id: accountId,
+      fb_page_id: account?.page_id || null,
+      handle: randomHandle(),
+      transcript: [],
+    })
     .select("*")
     .single();
   if (error) throw new Error(`[sheet] create: ${error.message}`);

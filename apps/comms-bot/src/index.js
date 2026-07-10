@@ -13,6 +13,7 @@ import { getOrCreateLead, mergeFields, updateLead, appendTranscript, isComplete 
 import { converse } from "./conversation.js";
 import { createPaymentLink } from "./checkout.js";
 import { runSweep } from "./followups.js";
+import { ensurePrimaryAccount, getAccountByPageId, verifyTokenMatches, appSecretFor } from "./accounts.js";
 
 const app = express();
 app.use(express.json({ verify: (req, _res, buf) => { req.rawBody = buf; } }));
@@ -20,11 +21,13 @@ app.use(express.json({ verify: (req, _res, buf) => { req.rawBody = buf; } }));
 app.get("/health", (_req, res) => res.json({ ok: true, service: "comms-bot" }));
 
 // ─── Meta webhook verification ───────────────────────────────────────────────
-app.get("/webhook", (req, res) => {
+// Accepts the env verify token or any dashboard-added account's own token, so
+// one webhook URL can serve every connected page/app.
+app.get("/webhook", async (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
-  if (mode === "subscribe" && token === config.fb.verifyToken) {
+  if (mode === "subscribe" && (await verifyTokenMatches(token))) {
     return res.status(200).send(challenge);
   }
   return res.sendStatus(403);
@@ -32,27 +35,35 @@ app.get("/webhook", (req, res) => {
 
 // ─── Messenger events ────────────────────────────────────────────────────────
 app.post("/webhook", async (req, res) => {
-  if (!verifySignature(req.rawBody, req.get("x-hub-signature-256"))) {
+  const body = req.body;
+  // A delivery concerns one app/page batch, so verify against that page's
+  // account secret (or the shared env secret) resolved from the first entry.
+  const firstAccount = await getAccountByPageId(body?.entry?.[0]?.id).catch(() => null);
+  if (!verifySignature(req.rawBody, req.get("x-hub-signature-256"), appSecretFor(firstAccount))) {
     return res.sendStatus(403);
   }
   res.sendStatus(200); // ack fast; process async
-  const body = req.body;
   if (body.object !== "page") return;
   for (const entry of body.entry || []) {
+    const account = await getAccountByPageId(entry.id).catch(() => null);
+    if (!account) {
+      console.warn("[comms] no registered account for page", entry.id, "— skipping");
+      continue;
+    }
     for (const event of entry.messaging || []) {
       const psid = event.sender?.id;
       const text = event.message?.text;
       if (!psid || event.message?.is_echo || !text) continue;
-      handleMessage(psid, text).catch((err) => console.error("[comms] handleMessage:", err.message));
+      handleMessage(account, psid, text).catch((err) => console.error("[comms] handleMessage:", err.message));
     }
   }
 });
 
-/** The core: one inbound message → update the sheet → one human reply. */
-export async function handleMessage(psid, text) {
-  let lead = await getOrCreateLead(psid);
+/** The core: one inbound message → update the right page's sheet → one human reply. */
+export async function handleMessage(account, psid, text) {
+  let lead = await getOrCreateLead(account, psid);
   await appendTranscript(lead, "client", text);
-  lead = await getOrCreateLead(psid); // reload with the appended transcript
+  lead = await getOrCreateLead(account, psid); // reload with the appended transcript
 
   const { extracted, insurance_opt_in, pay_method, reply } = await converse(lead, text);
 
@@ -74,14 +85,14 @@ export async function handleMessage(psid, text) {
     }
   }
 
-  await send(psid, messages, lead);
+  await send(account, psid, messages, lead);
 }
 
-async function send(psid, messages, lead) {
+async function send(account, psid, messages, lead) {
   for (const m of messages) {
     if (!m) continue;
-    await sendTyping(psid, true);
-    await sendText(psid, m);
+    await sendTyping(account, psid, true);
+    await sendText(account, psid, m);
     await appendTranscript(lead, "bot", m);
   }
 }
@@ -98,9 +109,12 @@ app.post("/sweep", async (req, res) => {
   }
 });
 
-app.listen(config.port, () => {
+app.listen(config.port, async () => {
   assertConfig();
   console.log(`[comms-bot] listening on :${config.port}`);
+  // Register the primary page from env so it appears on the dashboard and its
+  // page id is known for webhook routing before the first message lands.
+  await ensurePrimaryAccount().catch((e) => console.error("[comms] primary account:", e.message));
   const everyMs = Math.max(1, config.followupMinutes) * 60000;
   // Reconcile payments frequently; nudges are rate-limited inside the sweep.
   setInterval(() => {

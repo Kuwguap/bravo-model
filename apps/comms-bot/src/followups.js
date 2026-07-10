@@ -12,7 +12,14 @@
 import { config } from "./config.js";
 import { supa } from "./sheet.js";
 import { sendText } from "./facebook.js";
+import { accountForLead } from "./accounts.js";
 import { checkAndFinalize, matchSitePayment } from "./checkout.js";
+
+/** Send to a lead using its own page's token (each page replies as itself). */
+async function tell(lead, text) {
+  const account = await accountForLead(lead);
+  return sendText(account, lead.fb_psid, text);
+}
 
 // Varied, human-written nudges (never the same line twice in a row per lead).
 const NUDGES = [
@@ -36,10 +43,10 @@ export async function runSweep() {
     try {
       if (lead.pay_method === "chat" && lead.stripe_session_id) {
         const paid = await checkAndFinalize(lead);
-        if (paid) await sendText(lead.fb_psid, "payment came through 🎉 your temp tag's being made now — it'll hit your email shortly.");
+        if (paid) await tell(lead, "payment came through 🎉 your temp tag's being made now — it'll hit your email shortly.");
       } else if (lead.pay_method === "site") {
         const order = await matchSitePayment(lead);
-        if (order) await sendText(lead.fb_psid, "got your payment on the site — tag's being made now, check your email in a bit.");
+        if (order) await tell(lead, "got your payment on the site — tag's being made now, check your email in a bit.");
       }
     } catch (err) {
       console.warn("[sweep] reconcile", lead.handle, err.message);
@@ -56,7 +63,7 @@ export async function runSweep() {
   for (const lead of sitePending || []) {
     try {
       const order = await matchSitePayment(lead);
-      if (order) await sendText(lead.fb_psid, "saw your payment come through on the site — making the tag now.");
+      if (order) await tell(lead, "saw your payment come through on the site — making the tag now.");
     } catch (err) {
       console.warn("[sweep] site-match", lead.handle, err.message);
     }
@@ -76,7 +83,7 @@ export async function runSweep() {
     try {
       // Don't nudge if we already messaged since their last reply and it's recent.
       const idx = Math.min(lead.follow_up_count, NUDGES.length - 1);
-      await sendText(lead.fb_psid, NUDGES[idx](lead));
+      await tell(lead, NUDGES[idx](lead));
       await client
         .from("comms_leads")
         .update({ follow_up_count: lead.follow_up_count + 1, last_bot_message_at: new Date().toISOString() })

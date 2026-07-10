@@ -7,7 +7,7 @@ export const supa = () => getServiceClient();
 // ─── Overview metrics ────────────────────────────────────────────────────────
 export async function overview() {
   const client = supa();
-  const [txns, users, deliveries, dueRenewals, insCustomers, activePolicies, comms] = await Promise.all([
+  const [txns, users, deliveries, dueRenewals, insCustomers, activePolicies, comms, commsAccounts] = await Promise.all([
     client.from("transactions").select("source, amount_cents, status"),
     client.from("users").select("id", { count: "exact", head: true }),
     client.from("deliveries").select("status"),
@@ -22,6 +22,8 @@ export async function overview() {
     client.from("policies").select("id", { count: "exact", head: true }).eq("status", "active"),
     // Facebook comms bot leads (the sheet).
     client.from("comms_leads").select("status"),
+    // Connected Facebook pages (each is its own sheet).
+    client.from("comms_accounts").select("id", { count: "exact", head: true }).eq("active", true),
   ]);
   const commsRows = comms.data || [];
 
@@ -48,6 +50,7 @@ export async function overview() {
     commsCollecting: commsRows.filter((c) => c.status === "collecting").length,
     commsAwaiting: commsRows.filter((c) => c.status === "awaiting_payment").length,
     commsConverted: commsRows.filter((c) => c.status === "dispatched" || c.status === "paid").length,
+    commsAccounts: commsAccounts.count || 0,
   };
 }
 
@@ -235,13 +238,40 @@ export async function listAppeals(limit = 100) {
 }
 
 // ─── Comms sheet (Facebook lead-gen bot) ─────────────────────────────────────
-export async function listCommsLeads(limit = 200) {
+export async function listCommsLeads(limit = 200, accountId = null) {
+  let q = supa().from("comms_leads").select("*").order("updated_at", { ascending: false }).limit(limit);
+  if (accountId) q = q.eq("account_id", accountId);
+  return (await q).data || [];
+}
+
+// ─── Comms accounts (Facebook pages managed from the dashboard) ───────────────
+export async function listCommsAccounts() {
   const { data } = await supa()
-    .from("comms_leads")
+    .from("comms_accounts")
     .select("*")
-    .order("updated_at", { ascending: false })
-    .limit(limit);
+    .order("is_primary", { ascending: false })
+    .order("created_at", { ascending: true });
   return data || [];
+}
+export async function addCommsAccount({ name, page_id, page_access_token, app_secret, verify_token }) {
+  const { error } = await supa().from("comms_accounts").insert({
+    name: name || "Facebook page",
+    page_id: page_id ? String(page_id).trim() : null,
+    page_access_token: (page_access_token || "").trim() || null,
+    app_secret: (app_secret || "").trim() || null,
+    verify_token: (verify_token || "").trim() || null,
+    is_primary: false,
+    active: true,
+  });
+  if (error) throw new Error(error.message);
+}
+export async function setCommsAccountActive(id, active) {
+  await supa().from("comms_accounts").update({ active }).eq("id", id);
+}
+export async function deleteCommsAccount(id) {
+  // Leads keep their history; the FK nulls their account_id (on delete set null).
+  const { error } = await supa().from("comms_accounts").delete().eq("id", id);
+  if (error) throw new Error(error.message);
 }
 
 // ─── Renewals ────────────────────────────────────────────────────────────────

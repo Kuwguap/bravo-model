@@ -90,7 +90,7 @@ function layout(active, title, body) {
 <header class="top"><div class="topbar"><span class="brand"><b>NJ</b> Control</span>
 <form class="inline" method="post" action="/logout"><button class="btn ghost mini" style="color:#cdd3db;border-color:#39424f">Sign out</button></form></div>
 <nav class="tabs"><div class="wrap" style="display:flex;gap:4px;flex-wrap:wrap;padding:0">
-${tab("/", "Overview")}${tab("/analytics", "Analytics")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/appeals", "Appeals")}${tab("/sheet", "Sheet")}${tab("/renewals", "Renewals")}${tab("/insurance", "Insurance")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
+${tab("/", "Overview")}${tab("/analytics", "Analytics")}${tab("/transactions", "Transactions")}${tab("/deliveries", "Deliveries")}${tab("/appeals", "Appeals")}${tab("/sheet", "Sheet")}${tab("/accounts", "FB Pages")}${tab("/renewals", "Renewals")}${tab("/insurance", "Insurance")}${tab("/numbers", "Numbers")}${tab("/drivers", "Drivers")}${tab("/supervisors", "Supervisors")}
 </div></nav></header>
 <main class="wrap">${body}</main></body></html>`;
 }
@@ -123,8 +123,8 @@ export function overviewPage(o) {
     ${stat("Renewals due", o.renewalsDue, "awaiting reminder")}
   </div>
   <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-    <div><b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">Comms bot sheet</b><div class="muted">${o.commsAwaiting ?? 0} awaiting payment · live Facebook conversations</div></div>
-    <a class="btn ghost" href="/sheet">Open the sheet →</a>
+    <div><b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">Comms bot sheet</b><div class="muted">${o.commsAccounts ?? 0} connected page${(o.commsAccounts ?? 0) === 1 ? "" : "s"} · ${o.commsAwaiting ?? 0} awaiting payment · live Facebook conversations</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn ghost" href="/accounts">FB pages →</a><a class="btn ghost" href="/sheet">Open the sheet →</a></div>
   </div>
   <div class="card"><div class="row" style="grid-template-columns:1fr auto"><div><b style="font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px">Renewal sweep</b><div class="muted">Email every customer whose 28-day tag is due and not yet reminded.</div></div>
   <form method="post" action="/renewals/run"><button class="btn amber">Run sweep now</button></form></div></div>`);
@@ -248,16 +248,33 @@ export function insurancePage(rows) {
   <div class="card">${body}</div>`);
 }
 
-export function sheetPage(rows) {
+export function sheetPage(rows, accounts = [], activeId = null) {
   const done = (v) => (v ? `<span style="color:var(--reg)">${esc(v)}</span>` : `<span class="muted">—</span>`);
   const filled = (r) => {
     const need = ["first_name", "last_name", "phone", "email", "state", "address", "city", "zip", "vin", "year", "make", "model", "color"];
     return need.filter((f) => r[f]).length;
   };
+  const nameById = new Map(accounts.map((a) => [a.id, a.name]));
+  const active = accounts.find((a) => a.id === activeId);
+
+  // One sheet per page: a chip strip switches which page's conversations show.
+  const chip = (href, label, on) =>
+    `<a href="${href}" class="btn ${on ? "" : "ghost"} mini" style="text-decoration:none">${esc(label)}</a>`;
+  const chips = accounts.length
+    ? `<div class="card" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span class="muted" style="margin-right:4px">Sheet:</span>
+        ${chip("/sheet", "All pages", !activeId)}
+        ${accounts.map((a) => chip(`/sheet?account=${a.id}`, a.name + (a.is_primary ? " ★" : ""), a.id === activeId)).join("")}
+      </div>`
+    : "";
+
+  const showAcct = !activeId; // only show the page column in the combined view
+  const head = `<tr><th>Handle</th>${showAcct ? "<th>Page</th>" : ""}<th>Name</th><th>Phone</th><th>Email</th><th>State</th><th>Vehicle</th><th>VIN</th><th>Ins</th><th>Pay</th><th>Filled</th><th>Status</th><th>Updated</th></tr>`;
   const body = rows.length
-    ? `<table><thead><tr><th>Handle</th><th>Name</th><th>Phone</th><th>Email</th><th>State</th><th>Vehicle</th><th>VIN</th><th>Ins</th><th>Pay</th><th>Filled</th><th>Status</th><th>Updated</th></tr></thead><tbody>
+    ? `<table><thead>${head}</thead><tbody>
       ${rows.map((r) => `<tr>
         <td><b>${esc(r.handle || "—")}</b></td>
+        ${showAcct ? `<td class="muted">${esc(nameById.get(r.account_id) || "—")}</td>` : ""}
         <td>${done([r.first_name, r.last_name].filter(Boolean).join(" "))}</td>
         <td>${done(r.phone)}</td>
         <td>${done(r.email)}</td>
@@ -271,9 +288,10 @@ export function sheetPage(rows) {
         <td class="muted">${dt(r.updated_at)}</td>
       </tr>`).join("")}
       </tbody></table>`
-    : `<div class="empty">No conversations yet.</div>`;
-  return layout("/sheet", "Sheet", `<h1 class="page">The sheet</h1>
-  <div class="card"><p class="muted">Live view of the Facebook comms bot's conversations. Each row is one client; fields fill in real time as they reply. Rows sit here in limbo until the client comes back to finish.</p></div>
+    : `<div class="empty">No conversations yet${active ? ` on ${esc(active.name)}` : ""}.</div>`;
+  return layout("/sheet", "Sheet", `<h1 class="page">The sheet${active ? ` · ${esc(active.name)}` : ""}</h1>
+  <div class="card"><p class="muted">Live view of the Facebook comms bot's conversations. Each connected page keeps its own sheet — switch pages below. Each row is one client; fields fill in real time as they reply. Rows sit here in limbo until the client comes back to finish.</p></div>
+  ${chips}
   <div class="card">${body}</div>`);
 }
 
@@ -359,5 +377,41 @@ export function supervisorsPage(rows, flash) {
     <div class="fld"><label>Telegram id</label><input name="telegram_id" required></div>
     <button class="btn">Add supervisor</button>
   </div></form></div>
+  <div class="card">${body}</div>`);
+}
+
+export function accountsPage(rows, flash) {
+  const mask = (t) => (t ? `••••${String(t).slice(-6)}` : `<span class="muted">— not set</span>`);
+  const body = rows.length
+    ? `<table><thead><tr><th>Page</th><th>Page id</th><th>Token</th><th>Secret</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody>
+    ${rows.map((r) => `<tr>
+      <td><b>${esc(r.name)}</b></td>
+      <td class="muted">${esc(r.page_id || "—")}</td>
+      <td class="muted">${mask(r.page_access_token)}</td>
+      <td class="muted">${r.app_secret ? "custom" : "env default"}</td>
+      <td>${r.is_primary ? `<span class="pill insurance">Primary ★</span>` : `<span class="pill assigned">Page</span>`}</td>
+      <td>${r.active ? `<span class="pill delivered">Active</span>` : `<span class="pill assigned">Off</span>`}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <a class="btn ghost mini" href="/sheet?account=${r.id}" style="text-decoration:none">Sheet</a>
+        <form class="inline" method="post" action="/accounts/${r.id}/toggle"><button class="btn ghost mini">${r.active ? "Deactivate" : "Activate"}</button></form>
+        ${r.is_primary ? "" : `<form class="inline" method="post" action="/accounts/${r.id}/delete" onsubmit="return confirm('Remove ${esc(r.name)}? Its sheet history stays.')"><button class="btn ghost mini">Remove</button></form>`}
+      </td></tr>`).join("")}
+    </tbody></table>`
+    : `<div class="empty">No pages yet. The primary page registers itself once the comms bot boots with its env token.</div>`;
+  return layout("/accounts", "FB Pages", `<h1 class="page">Facebook pages</h1>
+  ${flash ? `<div class="flash">${esc(flash)}</div>` : ""}
+  <div class="card"><p class="muted">Each connected Facebook page runs on the same comms bot and keeps its <b>own separate sheet</b>. The <b>primary</b> page is wired in the bot's env and shows up here automatically. Add any extra page below — paste its <b>Page id</b> and a <b>Page access token</b> (from Meta → your app → Messenger → Generate token for that page). App secret / verify token are optional and fall back to the bot's shared env when blank.</p></div>
+  <div class="card"><form method="post" action="/accounts/add">
+    <div class="row" style="grid-template-columns:1fr 1fr;margin-bottom:10px">
+      <div class="fld"><label>Page name (label)</label><input name="name" placeholder="e.g. Jersey Tags Fast" required></div>
+      <div class="fld"><label>Page id</label><input name="page_id" placeholder="numeric Meta Page id" required></div>
+    </div>
+    <div class="fld" style="margin-bottom:10px"><label>Page access token</label><input name="page_access_token" placeholder="EAAG… page-scoped send token" required></div>
+    <div class="row" style="grid-template-columns:1fr 1fr auto">
+      <div class="fld"><label>App secret (optional)</label><input name="app_secret" placeholder="leave blank to use env default"></div>
+      <div class="fld"><label>Verify token (optional)</label><input name="verify_token" placeholder="leave blank to use env default"></div>
+      <button class="btn">Add page</button>
+    </div>
+  </form></div>
   <div class="card">${body}</div>`);
 }

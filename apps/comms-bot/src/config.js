@@ -3,9 +3,14 @@ import "dotenv/config";
 export const config = {
   port: Number(process.env.PORT || 8100),
 
-  // Facebook Messenger (Meta) — a Page access token + webhook verify token.
+  // Facebook Messenger (Meta). The PRIMARY page is wired here in env; every
+  // additional page (and the primary, for visibility) is managed on the central
+  // dashboard as a comms_accounts row. verifyToken/appSecret act as the shared
+  // fallback when an account doesn't override them.
   fb: {
     pageAccessToken: process.env.FB_PAGE_ACCESS_TOKEN || "",
+    pageId: process.env.FB_PAGE_ID || "", // optional; else resolved from the token via Graph /me
+    pageName: process.env.FB_PAGE_NAME || "",
     verifyToken: process.env.FB_VERIFY_TOKEN || "nj-comms-verify",
     appSecret: process.env.FB_APP_SECRET || "",
     graphVersion: process.env.FB_GRAPH_VERSION || "v21.0",

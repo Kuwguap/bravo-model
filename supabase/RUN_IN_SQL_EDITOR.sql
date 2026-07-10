@@ -458,3 +458,37 @@ create trigger comms_leads_set_updated_at
 -- Link an order back to the comms lead that produced it (for pay-on-site matching).
 alter table public.orders add column if not exists comms_handle text;
 
+-- ==== 0010_comms_accounts ====
+
+-- Multi-account comms bot: one Facebook Page = one "account" = its own sheet.
+create table if not exists public.comms_accounts (
+  id                 uuid primary key default gen_random_uuid(),
+  name               text not null default 'Facebook page',
+  page_id            text unique,
+  page_access_token  text,
+  app_secret         text,
+  verify_token       text,
+  is_primary         boolean not null default false,
+  active             boolean not null default true,
+  created_at         timestamptz not null default now(),
+  updated_at         timestamptz not null default now()
+);
+
+create index if not exists comms_accounts_page_idx on public.comms_accounts (page_id);
+
+alter table public.comms_accounts enable row level security;
+
+drop trigger if exists comms_accounts_set_updated_at on public.comms_accounts;
+create trigger comms_accounts_set_updated_at
+  before update on public.comms_accounts
+  for each row execute function public.set_updated_at();
+
+alter table public.comms_leads add column if not exists account_id uuid
+  references public.comms_accounts (id) on delete set null;
+alter table public.comms_leads add column if not exists fb_page_id text;
+
+create unique index if not exists comms_leads_acct_psid_uidx
+  on public.comms_leads (account_id, fb_psid)
+  where account_id is not null;
+create index if not exists comms_leads_account_idx on public.comms_leads (account_id);
+

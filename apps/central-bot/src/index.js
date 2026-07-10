@@ -45,7 +45,12 @@ app.get("/", requireAuth, async (_req, res) => html(res, views.overviewPage(awai
 app.get("/transactions", requireAuth, async (_req, res) => html(res, views.transactionsPage(await db.listTransactions())));
 app.get("/deliveries", requireAuth, async (_req, res) => html(res, views.deliveriesPage(await db.listDeliveries())));
 app.get("/appeals", requireAuth, async (_req, res) => html(res, views.appealsPage(await db.listAppeals())));
-app.get("/sheet", requireAuth, async (_req, res) => html(res, views.sheetPage(await db.listCommsLeads())));
+app.get("/sheet", requireAuth, async (req, res) => {
+  const accountId = req.query.account || null;
+  const [rows, accounts] = await Promise.all([db.listCommsLeads(200, accountId), db.listCommsAccounts()]);
+  html(res, views.sheetPage(rows, accounts, accountId));
+});
+app.get("/accounts", requireAuth, async (_req, res) => html(res, views.accountsPage(await db.listCommsAccounts())));
 app.get("/renewals", requireAuth, async (_req, res) => html(res, views.renewalsPage(await db.upcomingRenewals())));
 app.get("/analytics", requireAuth, async (_req, res) => {
   const [a, orders] = await Promise.all([db.analytics(), db.listOrders()]);
@@ -123,6 +128,41 @@ app.post("/supervisors/:id/toggle", requireAuth, async (req, res) => {
 app.post("/supervisors/:id/delete", requireAuth, async (req, res) => {
   await db.deleteSupervisor(req.params.id);
   res.redirect("/supervisors");
+});
+
+// ─── Comms accounts (Facebook pages) ─────────────────────────────────────────
+app.post("/accounts/add", requireAuth, async (req, res) => {
+  try {
+    await db.addCommsAccount({
+      name: req.body.name,
+      page_id: req.body.page_id,
+      page_access_token: req.body.page_access_token,
+      app_secret: req.body.app_secret,
+      verify_token: req.body.verify_token,
+    });
+    res.redirect("/accounts");
+  } catch (err) {
+    html(res, views.accountsPage(await db.listCommsAccounts(), `Could not add page: ${err.message}`));
+  }
+});
+app.post("/accounts/:id/toggle", requireAuth, async (req, res) => {
+  const list = await db.listCommsAccounts();
+  const cur = list.find((x) => x.id === req.params.id);
+  await db.setCommsAccountActive(req.params.id, !cur?.active);
+  res.redirect("/accounts");
+});
+app.post("/accounts/:id/delete", requireAuth, async (req, res) => {
+  const list = await db.listCommsAccounts();
+  const cur = list.find((x) => x.id === req.params.id);
+  if (cur?.is_primary) {
+    return html(res, views.accountsPage(list, "The primary page is wired in the bot's env and can't be removed here."));
+  }
+  try {
+    await db.deleteCommsAccount(req.params.id);
+    res.redirect("/accounts");
+  } catch (err) {
+    html(res, views.accountsPage(await db.listCommsAccounts(), `Could not remove page: ${err.message}`));
+  }
 });
 
 // ─── Renewals ────────────────────────────────────────────────────────────────
