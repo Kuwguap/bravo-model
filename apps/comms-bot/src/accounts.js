@@ -13,6 +13,7 @@ import { config } from "./config.js";
 
 const TTL_MS = 60000;
 let cache = { at: 0, byPage: new Map(), byId: new Map() };
+let primarySeeded = false; // so the primary self-registers even if boot ran before the migration
 
 async function refresh() {
   const { data, error } = await supa().from("comms_accounts").select("*").eq("active", true);
@@ -40,6 +41,12 @@ export async function getAccountByPageId(pageId) {
   let a = cache.byPage.get(String(pageId));
   if (!a) {
     await refresh(); // a brand-new dashboard-added page may not be cached yet
+    a = cache.byPage.get(String(pageId));
+  }
+  // Self-heal: if boot ran before the table existed, seed the primary on the
+  // first inbound message rather than requiring a manual restart.
+  if (!a && !primarySeeded && config.fb.pageAccessToken) {
+    await ensurePrimaryAccount();
     a = cache.byPage.get(String(pageId));
   }
   return a || null;
@@ -112,7 +119,16 @@ export async function ensurePrimaryAccount() {
   if (!pageId) return null;
 
   const client = supa();
-  const { data: existing } = await client.from("comms_accounts").select("id").eq("page_id", String(pageId)).maybeSingle();
+  const { data: existing, error: readErr } = await client
+    .from("comms_accounts")
+    .select("id")
+    .eq("page_id", String(pageId))
+    .maybeSingle();
+  if (readErr) {
+    // Table likely not migrated yet — leave primarySeeded false so a later call retries.
+    console.warn("[accounts] seed primary skipped:", readErr.message);
+    return null;
+  }
 
   // Env owns the primary's credentials; don't clobber a dashboard-renamed label
   // or an operator's active toggle on re-boot.
@@ -128,8 +144,12 @@ export async function ensurePrimaryAccount() {
     const { error } = await client
       .from("comms_accounts")
       .insert({ name: name || "Primary page", page_id: String(pageId), active: true, ...creds });
-    if (error) console.warn("[accounts] seed primary failed:", error.message);
+    if (error) {
+      console.warn("[accounts] seed primary failed:", error.message);
+      return null;
+    }
   }
+  primarySeeded = true;
   await refresh();
   console.log(`[accounts] primary page ready (${name || pageId})`);
   return cache.byPage.get(String(pageId)) || null;
